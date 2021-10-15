@@ -2,7 +2,6 @@ package ui;
 
 import java.util.Scanner;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import model.CategoryManager;
 import model.Product;
 import model.ProductAccount;
@@ -39,6 +38,20 @@ public class TrackerApp {
         }
 
         System.out.println("\nProcess ended!");
+    }
+
+
+    // EFFECTS: shows main menu
+    private void mainMenu() {
+        displayCategoryManagerChoice();
+        String command = input.next();
+        command = command.toLowerCase();
+
+        if (command.equals("q")) {
+            System.exit(0);
+        } else {
+            processCommand(command);
+        }
     }
 
     // MODIFIES: this
@@ -79,7 +92,7 @@ public class TrackerApp {
         System.out.println("\tcreate -> create product");
         System.out.println("\tdelete -> delete a product");
         System.out.println("\tchoose -> choose a product");
-        System.out.println("\tback -> go back");
+        System.out.println("\tback -> go back to choose a category");
         System.out.println("\tmain -> return to main menu");
     }
 
@@ -90,7 +103,7 @@ public class TrackerApp {
         System.out.println("\tcreate -> create product account");
         System.out.println("\tdelete -> delete a product account");
         System.out.println("\tchoose -> choose a product account to update");
-        System.out.println("\tback -> go back");
+        System.out.println("\tback -> go back to choose a product");
         System.out.println("\tmain -> return to main menu");
     }
 
@@ -101,7 +114,7 @@ public class TrackerApp {
         System.out.println("\tdate -> change date of product account");
         System.out.println("\tadd -> add certain amount of product");
         System.out.println("\tremove -> remove certain amount of product");
-        System.out.println("\tback -> go back");
+        System.out.println("\tback -> go back to choose a product account");
         System.out.println("\tmain -> return to main menu");
         return input.next();
     }
@@ -127,7 +140,7 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             chooseProductAccount(product, category);
         } else if (command.equals("main")) {
-            displayCategoryChoice();
+            mainMenu();
         } else {
             System.out.println("Selection not valid...");
         }
@@ -162,7 +175,7 @@ public class TrackerApp {
             if (i.getName().equals(choice)) {
                 categoryManager.removeCategory(i);
                 System.out.println("Category " + i.getName() + " deleted.");
-                return;
+                mainMenu();
             }
         }
 
@@ -179,7 +192,7 @@ public class TrackerApp {
         for (Category i: categoryManager.getCategories()) {
             if (i.getName().equals(choice)) {
                 chosenCategory(i);
-                return;
+                mainMenu();
             }
         }
 
@@ -202,9 +215,10 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             chooseCategory();
         } else if (command.equals("main")) {
-            displayCategoryManagerChoice();
+            mainMenu();
         } else {
             System.out.println("Selection not valid...");
+            chosenCategory(category);
         }
     }
 
@@ -215,9 +229,33 @@ public class TrackerApp {
         System.out.println("\tmonth -> get cost of products in category for a month");
         System.out.println("\tyear -> get cost of products in category for a year");
         System.out.println("\ttotal -> get total cost of products");
-        System.out.println("\tback -> go back");
+        System.out.println("\tback -> go back to category choices");
         System.out.println("\tmain -> return to main menu");
         return input.next();
+    }
+
+    // EFFECTS: shows category day stats
+    private void categoryStatsDay(Category category) {
+        System.out.println("Enter a date (yyyy-MM-dd): ");
+        String day = input.next();
+        System.out.println("$" + category.getDayCost(day));
+        categoryStats(category);
+    }
+
+    // EFFECTS: shows category month stats
+    private void categoryStatsMonth(Category category) {
+        System.out.println("Enter a month (yyyy-MM): ");
+        String month = input.next();
+        System.out.println("$" + category.getMonthCost(month));
+        categoryStats(category);
+    }
+
+    // EFFECTS: shows category year stats
+    private void categoryStatsYear(Category category) {
+        System.out.println("Enter a year (yyyy): ");
+        String year = input.next();
+        System.out.println("$ " + category.getYearCost(year));
+        categoryStats(category);
     }
 
     // EFFECTS: show category stats
@@ -225,25 +263,21 @@ public class TrackerApp {
         String command = categoryStatChoices();
 
         if (command.equals("day")) {
-            System.out.println("Enter a date (yyyy-MM-dd): ");
-            String day = input.next();
-            System.out.println(category.getDayCost(day));
+            categoryStatsDay(category);
         } else if (command.equals("month")) {
-            System.out.println("Enter a month (yyyy-MM): ");
-            String month = input.next();
-            System.out.println(category.getMonthCost(month));
+            categoryStatsMonth(category);
         } else if (command.equals("year")) {
-            System.out.println("Enter a year (yyyy): ");
-            String year = input.next();
-            System.out.println(category.getMonthCost(year));
+            categoryStatsYear(category);
         } else if (command.equals("total")) {
-            category.getTotalCost();
+            System.out.println("$ " + category.getTotalCost());
+            categoryStats(category);
         } else if (command.equals("back")) {
             chosenCategory(category);
         } else if (command.equals("main")) {
-            displayCategoryManagerChoice();
+            mainMenu();
         } else {
             System.out.println("Selection not valid...");
+            categoryStats(category);
         }
     }
 
@@ -277,7 +311,7 @@ public class TrackerApp {
                 category.removeProduct(i);
                 System.out.println("Product " + i.getName() + " deleted.");
                 chosenCategory(category);
-                return;
+                mainMenu();
             }
         }
 
@@ -294,7 +328,7 @@ public class TrackerApp {
         for (Product i: category.getProductList()) {
             if (i.getName().equals(choice)) {
                 chosenProduct(i, category);
-                return;
+                mainMenu();
             }
         }
 
@@ -318,9 +352,10 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             chooseProduct(category);
         } else if (command.equals("main")) {
-            displayCategoryManagerChoice();
+            mainMenu();
         } else {
             System.out.println("Selection not valid...");
+            chosenProduct(product, category);
         }
     }
 
@@ -329,7 +364,7 @@ public class TrackerApp {
         System.out.println("\nSelect from:");
         System.out.println("\tcost -> get list of cost stats");
         System.out.println("\tamount -> get list of amount stats");
-        System.out.println("\tback -> go back");
+        System.out.println("\tback -> go back to product choices");
         System.out.println("\tmain -> return to main menu");
         return input.next();
     }
@@ -365,65 +400,108 @@ public class TrackerApp {
         if (command.equals("cost")) {
             String choices = productCostStatChoices();
             productCostCommand(choices, product, category);
+            productStats(product, category);
         } else if (command.equals("amount")) {
             String choices = productAmountStatChoices();
             productAmountCommand(choices, product, category);
+            productStats(product, category);
         } else if (command.equals("back")) {
             chosenProduct(product, category);
         } else if (command.equals("main")) {
-            displayCategoryManagerChoice();
+            mainMenu();
         } else {
             System.out.println("Selection not valid...");
+            productStats(product, category);
         }
+    }
+
+    // EFFECTS: shows product day cost
+    public void productDayCost(Product product, Category category) {
+        System.out.println("Enter a date (yyyy-MM-dd): ");
+        String day = input.next();
+        System.out.println("$" + product.getDayCost(day));
+        productStats(product, category);
+    }
+
+    // EFFECTS: shows product month cost
+    public void productMonthCost(Product product, Category category) {
+        System.out.println("Enter a month (yyyy-MM): ");
+        String month = input.next();
+        System.out.println("$" + product.getMonthCost(month));
+        productStats(product, category);
+    }
+
+    // EFFECTS: shows product year cost
+    public void productYearCost(Product product, Category category) {
+        System.out.println("Enter a year (yyyy): ");
+        String year = input.next();
+        System.out.println("$" + product.getYearCost(year));
+        productStats(product, category);
     }
 
     // EFFECTS: prints cost of product
     private void productCostCommand(String command, Product product, Category category) {
         if (command.equals("day cost")) {
-            System.out.println("Enter a date (yyyy-MM-dd): ");
-            String day = input.next();
-            System.out.println(product.getDayCost(day));
+            productDayCost(product, category);
         } else if (command.equals("month cost")) {
-            System.out.println("Enter a month (yyyy-MM): ");
-            String month = input.next();
-            System.out.println(product.getMonthCost(month));
+            productMonthCost(product, category);
         } else if (command.equals("year cost")) {
-            System.out.println("Enter a year (yyyy): ");
-            String year = input.next();
-            System.out.println(product.getMonthCost(year));
+            productYearCost(product, category);
         } else if (command.equals("total cost")) {
-            System.out.println(product.getTotalCost());
+            System.out.println("$" + product.getTotalCost());
+            productStats(product, category);
         }  else if (command.equals("back")) {
-            chosenProduct(product, category);
+            productStats(product, category);
         } else if (command.equals("main")) {
-            displayCategoryManagerChoice();
+            mainMenu();
         } else {
             System.out.println("Selection not valid...");
+            productStats(product, category);
         }
+    }
+
+    // EFFECTS: shows product day amount
+    private void productDayAmount(Product product, Category category) {
+        System.out.println("Enter a date (yyyy-MM-dd): ");
+        String day = input.next();
+        System.out.println("Amount: " + product.getDayAmount(day));
+        productStats(product, category);
+    }
+
+    // EFFECTS: shows product month amount
+    private void productMonthAmount(Product product, Category category) {
+        System.out.println("Enter a month (yyyy-MM): ");
+        String month = input.next();
+        System.out.println("Amount: " + product.getMonthAmount(month));
+        productStats(product, category);
+    }
+
+    // EFFECTS: shows product year amount
+    private void productYearAmount(Product product, Category category) {
+        System.out.println("Enter a year (yyyy): ");
+        String year = input.next();
+        System.out.println("Amount: " + product.getYearAmount(year));
+        productStats(product, category);
     }
 
     // EFFECTS: prints amount of product
     private void productAmountCommand(String command, Product product, Category category) {
         if (command.equals("day amount")) {
-            System.out.println("Enter a date (yyyy-MM-dd): ");
-            String day = input.next();
-            System.out.println(product.getDayAmount(day));
+            productDayAmount(product, category);
         } else if (command.equals("month amount")) {
-            System.out.println("Enter a month (yyyy-MM): ");
-            String month = input.next();
-            System.out.println(product.getMonthAmount(month));
+            productMonthAmount(product, category);
         } else if (command.equals("year amount")) {
-            System.out.println("Enter a year (yyyy): ");
-            String year = input.next();
-            System.out.println(product.getMonthAmount(year));
+            productYearAmount(product, category);
         } else if (command.equals("total amount")) {
-            System.out.println(product.getTotalAmount());
+            System.out.println("Amount: " + product.getTotalAmount());
+            productStats(product, category);
         } else if (command.equals("back")) {
-            chosenProduct(product, category);
+            productStats(product, category);
         } else if (command.equals("main")) {
-            displayCategoryManagerChoice();
+            mainMenu();
         } else {
             System.out.println("Selection not valid...");
+            productStats(product, category);
         }
     }
 
@@ -462,7 +540,7 @@ public class TrackerApp {
                 product.removeProductAccount(i);
                 System.out.println("Product Account deleted.");
                 chosenProduct(product, category);
-                return;
+                mainMenu();
             }
         }
 
@@ -480,7 +558,7 @@ public class TrackerApp {
         for (ProductAccount i: product.getProductAccounts()) {
             if (i.getDate().equals(choice)) {
                 chosenProductAccount(i, product, category);
-                return;
+                mainMenu();
             }
         }
 
