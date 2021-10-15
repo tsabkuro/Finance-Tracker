@@ -10,7 +10,7 @@ public class Category {
     private ArrayList<Product> productList;
 
     /*
-     * REQUIRES: categoryName has a non-zero length
+     * REQUIRES: categoryName has a non-zero length and is unique
      * EFFECTS: name on category set to categoryName
      *          id on category is a positive integer and unique
      *          productList is ArrayList of type Product

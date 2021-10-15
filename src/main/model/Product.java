@@ -8,7 +8,7 @@ public class Product {
     private ArrayList<ProductAccount> productAccounts;
 
     /*
-     * REQUIRES: productName has a non-zero length
+     * REQUIRES: productName has a non-zero length and is unique
      * EFFECTS: name on product set to productName
      */
     public Product(String productName) {
