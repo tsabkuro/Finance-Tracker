@@ -27,11 +27,16 @@ public class ProductAccount {
         return cost;
     }
 
-    /*
-     * EFFECTS: returns date of product account in string form
-     */
     public String getDate() {
-        return "";
+        return date;
+    }
+
+    public String getMonth() {
+        return date.substring(0, date.length() - 3);
+    }
+
+    public String getYear() {
+        return date.substring(0, date.length() - 6);
     }
 
     /*
@@ -41,6 +46,7 @@ public class ProductAccount {
      * 		    returns cost
      */
     public double setCost(double productCost) {
+        cost = productCost;
         return cost;
     }
 
@@ -50,6 +56,7 @@ public class ProductAccount {
      * 		    returns date
      */
     public String setDate(String productDate) {
+        date = productDate;
         return date;
     }
 
@@ -60,6 +67,7 @@ public class ProductAccount {
      * 			returns amount
      */
     public int addAmount(int productAmount) {
+        amount += productAmount;
         return amount;
     }
 
@@ -70,6 +78,7 @@ public class ProductAccount {
      * 		    returns amount
      */
     public int removeAmount(int productAmount) {
+        amount -= productAmount;
         return amount;
     }
 }

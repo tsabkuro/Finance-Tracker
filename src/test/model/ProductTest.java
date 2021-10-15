@@ -126,13 +126,14 @@ class ProductTest {
     void testGetMonthCost() {
         testProductBread.addProductAccount(breadAccount1);
         testProductBread.addProductAccount(breadAccount4);
+        testProductBread.getMonthCost("2018-09");
         assertEquals(9.50, testProductBread.getMonthCost("2018-09"));
         assertEquals(0, testProductBread.getMonthCost("2018-10"));
         testProductBread.addProductAccount(breadAccount2);
         testProductBread.addProductAccount(breadAccount3);
         assertEquals(54.5, testProductBread.getMonthCost("2018-09"));
         assertEquals(30, testProductBread.getMonthCost("2018-10"));
-        assertEquals(7.44, testProductBread.getMonthAmount("2015-10"));
+        assertEquals(7.44, testProductBread.getMonthCost("2015-10"));
     }
 
     @Test

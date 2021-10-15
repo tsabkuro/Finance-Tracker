@@ -40,17 +40,23 @@ public class Category {
      *          returns product list
      */
     public ArrayList<Product> addProduct(Product product) {
-        return new ArrayList<Product>();
+        for (Product i: productList) {
+            if (i.getName().equals(product.getName())) {
+                return productList;
+            }
+        }
+        productList.add(product);
+        return productList;
     }
 
     /*
      * MODIFIES: this
      * EFFECTS: removes product from category
-     *          if product does not exist then changes nothing
      *          returns product list
      */
     public ArrayList<Product> removeProduct(Product product) {
-        return new ArrayList<Product>();
+        productList.remove(product);
+        return productList;
     }
 
     /*
@@ -58,7 +64,11 @@ public class Category {
      * EFFECTS: returns cost of products in category for a day
      */
     public double getDayCost(String productDate) {
-        return 0;
+        double dayCost = 0;
+        for (Product i: productList) {
+            dayCost += i.getDayCost(productDate);
+        }
+        return dayCost;
     }
 
     /*
@@ -66,20 +76,32 @@ public class Category {
      * EFFECTS: returns cost of products in category for a month
      */
     public double getMonthCost(String productDate) {
-        return 0;
+        double monthCost = 0;
+        for (Product i: productList) {
+            monthCost += i.getMonthCost(productDate);
+        }
+        return monthCost;
     }
 
     /*
      * EFFECTS: returns cost of products in category for a year
      */
     public double getYearCost(String year) {
-        return 0;
+        double yearCost = 0;
+        for (Product i: productList) {
+            yearCost += i.getYearCost(year);
+        }
+        return yearCost;
     }
 
     /*
      * EFFECTS: returns total cost of products in category
      */
     public double getTotalCost() {
-        return 0;
+        double totalCost = 0;
+        for (Product i: productList) {
+            totalCost += i.getTotalCost();
+        }
+        return totalCost;
     }
 }

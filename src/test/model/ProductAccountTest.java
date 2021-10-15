@@ -21,6 +21,16 @@ class ProductAccountTest {
     }
 
     @Test
+    void testGetMonth() {
+        assertEquals("2021-08", testProductAccount.getMonth());
+    }
+
+    @Test
+    void testGetYear() {
+        assertEquals("2021", testProductAccount.getYear());
+    }
+
+    @Test
     void testSetCost() {
         testProductAccount.setCost(0.12);
         assertEquals(0.12, testProductAccount.getCost());

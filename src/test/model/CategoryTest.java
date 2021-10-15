@@ -59,7 +59,7 @@ class CategoryTest {
         testCategory1.removeProduct(apple);
         assertEquals(0, testCategory1.getProductList().size());
         assertFalse(testCategory1.getProductList().contains(bread));
-        assertTrue(testCategory1.getProductList().contains(apple));
+        assertFalse(testCategory1.getProductList().contains(apple));
     }
 
     @Test
@@ -90,13 +90,13 @@ class CategoryTest {
         bread.addProductAccount(breadAccount1);
         assertEquals(9.5, testCategory1.getMonthCost("2018-09"));
         assertEquals(0, testCategory1.getMonthCost("2018-08"));
-        assertEquals(9.5, testCategory1.getMonthCost("2017-09"));
+        assertEquals(0, testCategory1.getMonthCost("2017-09"));
 
         bread.addProductAccount(breadAccount2);
         bread.addProductAccount(breadAccount3);
         apple.addProductAccount(appleAccount1);
         apple.addProductAccount(appleAccount2);
-        assertEquals(58.04, testCategory1.getMonthCost("2018-09"));
+        assertEquals(58.05, testCategory1.getMonthCost("2018-09"));
         assertEquals(30, testCategory1.getMonthCost("2015-09"));
         assertEquals(45, testCategory1.getMonthCost("2015-10"));
     }
@@ -115,7 +115,7 @@ class CategoryTest {
         apple.addProductAccount(appleAccount1);
         apple.addProductAccount(appleAccount2);
         apple.addProductAccount(appleAccount3);
-        assertEquals(58.04, testCategory1.getYearCost("2018"));
+        assertEquals(58.05, testCategory1.getYearCost("2018"));
         assertEquals(75, testCategory1.getYearCost("2015"));
         assertEquals(30, testCategory1.getYearCost("2017"));
     }

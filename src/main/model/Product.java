@@ -29,7 +29,13 @@ public class Product {
      * EFFECTS: returns total amount of product in a day
      */
     public int getDayAmount(String productDate) {
-        return 0;
+        int dayAmount = 0;
+        for (ProductAccount i: productAccounts) {
+            if (i.getDate().equals(productDate)) {
+                dayAmount += i.getAmount();
+            }
+        }
+        return dayAmount;
     }
 
     /*
@@ -37,21 +43,38 @@ public class Product {
      * EFFECTS: returns total amount of product in a month of a year
      */
     public int getMonthAmount(String productDate) {
-        return 0;
+        int monthAmount = 0;
+        for (ProductAccount i: productAccounts) {
+            if (i.getMonth().equals(productDate)) {
+                monthAmount += i.getAmount();
+            }
+        }
+        return monthAmount;
     }
 
     /*
+     * REQUIRES: year is in format yyyy
      * EFFECTS: returns total amount of product in a year
      */
     public int getYearAmount(String year) {
-        return 0;
+        int yearAmount = 0;
+        for (ProductAccount i: productAccounts) {
+            if (i.getYear().equals(year)) {
+                yearAmount += i.getAmount();
+            }
+        }
+        return yearAmount;
     }
 
     /*
      *  EFFECTS: returns total amount of product
      */
     public int getTotalAmount() {
-        return 0;
+        int totalAmount = 0;
+        for (ProductAccount i: productAccounts) {
+            totalAmount += i.getAmount();
+        }
+        return totalAmount;
     }
 
     /*
@@ -59,28 +82,50 @@ public class Product {
      * EFFECTS: returns total amount of product in a day
      */
     public double getDayCost(String productDate) {
-        return 0;
+        double dayCost = 0;
+        for (ProductAccount i: productAccounts) {
+            if (i.getDate().equals(productDate)) {
+                dayCost += i.getCost();
+            }
+        }
+        return dayCost;
     }
 
     /*
      *  EFFECTS: returns cost of product in a month
      */
     public double getMonthCost(String productDate) {
-        return 0;
+        double monthCost = 0;
+        for (ProductAccount i: productAccounts) {
+            if (i.getMonth().equals(productDate)) {
+                monthCost += i.getCost();
+            }
+        }
+        return monthCost;
     }
 
     /*
      * EFFECTS: returns total cost of product in a year
      */
     public double getYearCost(String year) {
-        return 0;
+        double yearCost = 0;
+        for (ProductAccount i: productAccounts) {
+            if (i.getYear().equals(year)) {
+                yearCost += i.getCost();
+            }
+        }
+        return yearCost;
     }
 
     /*
      *  EFFECTS: returns total cost of product
      */
     public double getTotalCost() {
-        return 0;
+        double totalCost = 0;
+        for (ProductAccount i: productAccounts) {
+            totalCost += i.getCost();
+        }
+        return totalCost;
     }
 
     /*
@@ -88,7 +133,8 @@ public class Product {
      *          returns product account list
      */
     public ArrayList<ProductAccount> addProductAccount(ProductAccount productAccount) {
-        return new ArrayList<ProductAccount>();
+        productAccounts.add(productAccount);
+        return productAccounts;
     }
 
     /*
@@ -96,6 +142,7 @@ public class Product {
      *          returns product account list
      */
     public ArrayList<ProductAccount> removeProductAccount(ProductAccount productAccount) {
-        return new ArrayList<ProductAccount>();
+        productAccounts.remove(productAccount);
+        return productAccounts;
     }
 }
