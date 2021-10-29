@@ -21,20 +21,11 @@ public class TrackerApp {
     // EFFECTS: processes user input
     private void runApp() {
         boolean running = true;
-        String command;
 
         init();
 
         while (running) {
-            displayCategoryManagerChoice();
-            command = input.next();
-            command = command.toLowerCase();
-
-            if (command.equals("q")) {
-                running = false;
-            } else {
-                processCommand(command);
-            }
+            running = mainMenu();
         }
 
         System.out.println("\nProcess ended!");
@@ -42,16 +33,17 @@ public class TrackerApp {
 
 
     // EFFECTS: shows main menu
-    private void mainMenu() {
+    private boolean mainMenu() {
         displayCategoryManagerChoice();
         String command = input.next();
         command = command.toLowerCase();
 
         if (command.equals("q")) {
-            System.exit(0);
+            return false;
         } else {
             processCommand(command);
         }
+        return true;
     }
 
     // MODIFIES: this
@@ -119,30 +111,28 @@ public class TrackerApp {
         return input.next();
     }
 
+    // EFFECTS: enters option to update product account
     private void displayProductAccountUpdate(String command, Category category,
                                              Product product, ProductAccount productAccount) {
         if (command.equals("cost")) {
             System.out.print("Enter a price: $");
-            double newCost = input.nextDouble();
-            productAccount.setCost(newCost);
+            productAccount.setCost(input.nextDouble());
         } else if (command.equals("date")) {
             System.out.print("Enter a date(yyyy-MM-dd): ");
-            String newDate = input.next();
-            productAccount.setDate(newDate);
+            productAccount.setDate(input.next());
         } else if (command.equals("add")) {
             System.out.print("Enter an amount to add: ");
-            int amountToAdd = input.nextInt();
-            productAccount.addAmount(amountToAdd);
+            productAccount.addAmount(input.nextInt());
         } else if (command.equals("remove")) {
             System.out.print("Enter an amount to remove: ");
-            int amountToRemove = input.nextInt();
-            productAccount.removeAmount(amountToRemove);
+            productAccount.removeAmount(input.nextInt());
         } else if (command.equals("back")) {
             chooseProductAccount(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
+            displayProductAccountUpdate(command, category, product, productAccount);
         }
     }
 
@@ -175,7 +165,7 @@ public class TrackerApp {
             if (i.getName().equals(choice)) {
                 categoryManager.removeCategory(i);
                 System.out.println("Category " + i.getName() + " deleted.");
-                mainMenu();
+                return;
             }
         }
 
@@ -192,7 +182,7 @@ public class TrackerApp {
         for (Category i: categoryManager.getCategories()) {
             if (i.getName().equals(choice)) {
                 chosenCategory(i);
-                mainMenu();
+                return;
             }
         }
 
@@ -215,7 +205,7 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             chooseCategory();
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             chosenCategory(category);
@@ -274,7 +264,7 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             chosenCategory(category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             categoryStats(category);
@@ -311,7 +301,7 @@ public class TrackerApp {
                 category.removeProduct(i);
                 System.out.println("Product " + i.getName() + " deleted.");
                 chosenCategory(category);
-                mainMenu();
+                return;
             }
         }
 
@@ -328,7 +318,7 @@ public class TrackerApp {
         for (Product i: category.getProductList()) {
             if (i.getName().equals(choice)) {
                 chosenProduct(i, category);
-                mainMenu();
+                return;
             }
         }
 
@@ -352,7 +342,7 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             chooseProduct(category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             chosenProduct(product, category);
@@ -400,15 +390,13 @@ public class TrackerApp {
         if (command.equals("cost")) {
             String choices = productCostStatChoices();
             productCostCommand(choices, product, category);
-            productStats(product, category);
         } else if (command.equals("amount")) {
             String choices = productAmountStatChoices();
             productAmountCommand(choices, product, category);
-            productStats(product, category);
         } else if (command.equals("back")) {
             chosenProduct(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             productStats(product, category);
@@ -453,7 +441,7 @@ public class TrackerApp {
         }  else if (command.equals("back")) {
             productStats(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             productStats(product, category);
@@ -498,7 +486,7 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             productStats(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             productStats(product, category);
@@ -540,7 +528,7 @@ public class TrackerApp {
                 product.removeProductAccount(i);
                 System.out.println("Product Account deleted.");
                 chosenProduct(product, category);
-                mainMenu();
+                return;
             }
         }
 
@@ -558,7 +546,7 @@ public class TrackerApp {
         for (ProductAccount i: product.getProductAccounts()) {
             if (i.getDate().equals(choice)) {
                 chosenProductAccount(i, product, category);
-                mainMenu();
+                return;
             }
         }
 

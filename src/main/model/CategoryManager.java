@@ -2,9 +2,13 @@ package model;
 
 import java.util.ArrayList;
 
+// Represents category manager having a list of categories
 public class CategoryManager {
-    private ArrayList<Category> categories = new ArrayList<Category>();
+    private ArrayList<Category> categories = new ArrayList<Category>(); // list of categories
 
+    /*
+    * EFFECTS: returns list of categories
+    */
     public ArrayList<Category> getCategories() {
         return categories;
     }
