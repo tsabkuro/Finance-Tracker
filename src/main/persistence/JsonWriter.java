@@ -1,8 +1,6 @@
 package persistence;
 
-import model.Category;
 import model.CategoryManager;
-import model.Product;
 import org.json.JSONObject;
 
 
@@ -30,13 +28,6 @@ public class JsonWriter {
     // EFFECTS: writes JSON representation of category manager to file
     public void write(CategoryManager cm) {
         JSONObject jsonCM = cm.toJson();
-        saveToFile(jsonCM.toString(TAB));
-    }
-
-    // MODIFIES: this
-    // EFFECTS: writes JSON representation of category manager to file
-    public void write(Category c) {
-        JSONObject jsonCM = c.toJson();
         saveToFile(jsonCM.toString(TAB));
     }
 
