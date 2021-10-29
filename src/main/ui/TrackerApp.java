@@ -105,6 +105,7 @@ public class TrackerApp {
         System.out.println("\tcreate -> create product");
         System.out.println("\tdelete -> delete a product");
         System.out.println("\tchoose -> choose a product");
+        System.out.println("\tprint -> list products");
         System.out.println("\tback -> go back to choose a category");
         System.out.println("\tmain -> return to main menu");
     }
@@ -116,6 +117,7 @@ public class TrackerApp {
         System.out.println("\tcreate -> create product account");
         System.out.println("\tdelete -> delete a product account");
         System.out.println("\tchoose -> choose a product account to update");
+        System.out.println("\tprint -> list product accounts");
         System.out.println("\tback -> go back to choose a product");
         System.out.println("\tmain -> return to main menu");
     }
@@ -221,6 +223,9 @@ public class TrackerApp {
             createProduct(category);
         } else if (command.equals("choose")) {
             chooseProduct(category);
+        } else if (command.equals("print")) {
+            listProducts(category);
+            chosenCategory(category);
         } else if (command.equals("delete")) {
             deleteProduct(category);
         } else if (command.equals("back")) {
@@ -358,6 +363,9 @@ public class TrackerApp {
             createProductAccount(product, category);
         } else if (command.equals("choose")) {
             chooseProductAccount(product, category);
+        } else if (command.equals("print")) {
+            listProductAccounts(product);
+            chosenProduct(product, category);
         } else if (command.equals("delete")) {
             deleteProductAccount(product, category);
         } else if (command.equals("back")) {
@@ -606,45 +614,4 @@ public class TrackerApp {
             System.out.println("Unable to read from file: " + JSON_STORE);
         }
     }
-
-//    // EFFECTS: saves the category to file
-//    private void saveCategory() {
-//        for (Category category : categoryManager.getCategories()) {
-//            JsonWriter.write(category);
-//        }
-//    }
-//
-//    // MODIFIES: this
-//    // EFFECTS: loads categoryManager from file
-//    private void loadCategory() {
-//        try {
-//            categoryManager = jsonReader.readCM();
-//            System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
-//        } catch (IOException e) {
-//            System.out.println("Unable to read from file: " + JSON_STORE);
-//        }
-//    }
-//
-//    // EFFECTS: saves the categoryManager to file
-//    private void saveProduct() {
-//        try {
-//            jsonWriter.open();
-//            jsonWriter.write(categoryManager);
-//            jsonWriter.close();
-//            System.out.println("Saved " + categoryManager.getName() + " to " + JSON_STORE);
-//        } catch (FileNotFoundException e) {
-//            System.out.println("Unable to write to file: " + JSON_STORE);
-//        }
-//    }
-//
-//    // MODIFIES: this
-//    // EFFECTS: loads categoryManager from file
-//    private void loadProduct() {
-//        try {
-//            categoryManager = jsonReader.readCM();
-//            System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
-//        } catch (IOException e) {
-//            System.out.println("Unable to read from file: " + JSON_STORE);
-//        }
-//    }
 }
