@@ -12,7 +12,7 @@ class CategoryManagerTest {
 
     @BeforeEach
     void runBefore() {
-        categoryManager = new CategoryManager();
+        categoryManager = new CategoryManager("Test");
         testCategory1 = new Category("Food");
         testCategory2 = new Category("Appliances");
     }

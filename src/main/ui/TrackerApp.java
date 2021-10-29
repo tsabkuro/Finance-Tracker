@@ -1,16 +1,26 @@
 package ui;
 
+import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import model.CategoryManager;
 import model.Product;
 import model.ProductAccount;
 import model.Category;
+import org.json.JSONObject;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 // Finance tracker application
 public class TrackerApp {
-    private CategoryManager categoryManager;
+    private static final String JSON_STORE = "./data/categoryManager.json";
     private Scanner input;
+    private CategoryManager categoryManager;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     // EFFECTS: runs finance tracker application
     public TrackerApp() {
@@ -29,6 +39,16 @@ public class TrackerApp {
         }
 
         System.out.println("\nProcess ended!");
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes category manager
+    private void init() {
+        categoryManager = new CategoryManager("Main");
+        input = new Scanner(System.in);
+        input.useDelimiter("\n");
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
     }
 
 
@@ -55,17 +75,15 @@ public class TrackerApp {
             chooseCategory();
         } else if (command.equals("delete")) {
             deleteCategory();
+        } else if (command.equals("print")) {
+            listCategories();
+        } else if (command.equals("save")) {
+            saveCategoryManager();
+        } else if (command.equals("load")) {
+            loadCategoryManager();
         } else {
             System.out.println("Selection not valid...");
         }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: initializes category manager
-    private void init() {
-        categoryManager = new CategoryManager();
-        input = new Scanner(System.in);
-        input.useDelimiter("\n");
     }
 
     // EFFECTS: displays menu of options from category manager
@@ -74,6 +92,9 @@ public class TrackerApp {
         System.out.println("\tcreate -> create category");
         System.out.println("\tdelete -> delete a category");
         System.out.println("\tchoose -> choose a category");
+        System.out.println("\tprint -> list categories");
+        System.out.println("\tsave -> save tracker to file");
+        System.out.println("\tload -> load tracker from file");
         System.out.println("\tq -> quit");
     }
 
@@ -562,4 +583,68 @@ public class TrackerApp {
 
         chosenProduct(product, category);
     }
+
+    // EFFECTS: saves the categoryManager to file
+    private void saveCategoryManager() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(categoryManager);
+            jsonWriter.close();
+            System.out.println("Saved " + categoryManager.getName() + " to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads categoryManager from file
+    private void loadCategoryManager() {
+        try {
+            categoryManager = jsonReader.readCM();
+            System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
+    }
+
+//    // EFFECTS: saves the category to file
+//    private void saveCategory() {
+//        for (Category category : categoryManager.getCategories()) {
+//            JsonWriter.write(category);
+//        }
+//    }
+//
+//    // MODIFIES: this
+//    // EFFECTS: loads categoryManager from file
+//    private void loadCategory() {
+//        try {
+//            categoryManager = jsonReader.readCM();
+//            System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
+//        } catch (IOException e) {
+//            System.out.println("Unable to read from file: " + JSON_STORE);
+//        }
+//    }
+//
+//    // EFFECTS: saves the categoryManager to file
+//    private void saveProduct() {
+//        try {
+//            jsonWriter.open();
+//            jsonWriter.write(categoryManager);
+//            jsonWriter.close();
+//            System.out.println("Saved " + categoryManager.getName() + " to " + JSON_STORE);
+//        } catch (FileNotFoundException e) {
+//            System.out.println("Unable to write to file: " + JSON_STORE);
+//        }
+//    }
+//
+//    // MODIFIES: this
+//    // EFFECTS: loads categoryManager from file
+//    private void loadProduct() {
+//        try {
+//            categoryManager = jsonReader.readCM();
+//            System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
+//        } catch (IOException e) {
+//            System.out.println("Unable to read from file: " + JSON_STORE);
+//        }
+//    }
 }

@@ -1,9 +1,13 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 
 // Represents category of product having an id, name and product list
-public class Category {
+public class Category implements Writable {
     private static int nextCategoryId = 1;  // tracks id of category
     private int id;                        // category id
     private String name;                   // category name
@@ -103,5 +107,24 @@ public class Category {
             totalCost += i.getTotalCost();
         }
         return totalCost;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("products", productsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns things in this workroom as a JSON array
+    private JSONArray productsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Product p : productList) {
+            jsonArray.put(p.toJson());
+        }
+
+        return jsonArray;
     }
 }

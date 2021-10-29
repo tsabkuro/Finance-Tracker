@@ -1,7 +1,10 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 // Represents a product account having a cost, amount, and date bought
-public class ProductAccount {
+public class ProductAccount implements Writable {
     private double cost;                    // the product cost (in dollars)
     private String date;                    // date the product was bought
     private int amount;                     // amount of product bought
@@ -80,6 +83,15 @@ public class ProductAccount {
     public int removeAmount(int productAmount) {
         amount -= productAmount;
         return amount;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("amount", amount);
+        json.put("cost", cost);
+        json.put("date", date);
+        return json;
     }
 }
 

@@ -1,9 +1,13 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 
 // Represents a product having a name and list of product accounts
-public class Product {
+public class Product implements Writable {
     private String name;        // the product name
     private ArrayList<ProductAccount> productAccounts;
 
@@ -144,5 +148,24 @@ public class Product {
     public ArrayList<ProductAccount> removeProductAccount(ProductAccount productAccount) {
         productAccounts.remove(productAccount);
         return productAccounts;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("product accounts", productAccountsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns things in this workroom as a JSON array
+    private JSONArray productAccountsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (ProductAccount pa : productAccounts) {
+            jsonArray.put(pa.toJson());
+        }
+
+        return jsonArray;
     }
 }
