@@ -1,16 +1,23 @@
 package ui;
 
 import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import model.CategoryManager;
 import model.Product;
 import model.ProductAccount;
 import model.Category;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 // Finance tracker application
 public class TrackerApp {
-    private CategoryManager categoryManager;
+    private static final String JSON_STORE = "./data/categoryManager.json";
     private Scanner input;
+    private CategoryManager categoryManager;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     // EFFECTS: runs finance tracker application
     public TrackerApp() {
@@ -21,37 +28,39 @@ public class TrackerApp {
     // EFFECTS: processes user input
     private void runApp() {
         boolean running = true;
-        String command;
 
         init();
 
         while (running) {
-            mainMenu();
-//            displayCategoryManagerChoice();
-//            command = input.next();
-//            command = command.toLowerCase();
-//
-//            if (command.equals("q")) {
-//                running = false;
-//            } else {
-//                processCommand(command);
-//            }
+            running = mainMenu();
         }
+
         System.out.println("\nProcess ended!");
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes category manager
+    private void init() {
+        categoryManager = new CategoryManager("Main");
+        input = new Scanner(System.in);
+        input.useDelimiter("\n");
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
     }
 
 
     // EFFECTS: shows main menu
-    private void mainMenu() {
+    private boolean mainMenu() {
         displayCategoryManagerChoice();
         String command = input.next();
         command = command.toLowerCase();
 
         if (command.equals("q")) {
-            System.exit(0);
+            return false;
         } else {
             processCommand(command);
         }
+        return true;
     }
 
     // MODIFIES: this
@@ -63,17 +72,15 @@ public class TrackerApp {
             chooseCategory();
         } else if (command.equals("delete")) {
             deleteCategory();
+        } else if (command.equals("print")) {
+            listCategories();
+        } else if (command.equals("save")) {
+            saveCategoryManager();
+        } else if (command.equals("load")) {
+            loadCategoryManager();
         } else {
             System.out.println("Selection not valid...");
         }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: initializes category manager
-    private void init() {
-        categoryManager = new CategoryManager();
-        input = new Scanner(System.in);
-        input.useDelimiter("\n");
     }
 
     // EFFECTS: displays menu of options from category manager
@@ -82,6 +89,9 @@ public class TrackerApp {
         System.out.println("\tcreate -> create category");
         System.out.println("\tdelete -> delete a category");
         System.out.println("\tchoose -> choose a category");
+        System.out.println("\tprint -> list categories");
+        System.out.println("\tsave -> save tracker to file");
+        System.out.println("\tload -> load tracker from file");
         System.out.println("\tq -> quit");
     }
 
@@ -92,6 +102,7 @@ public class TrackerApp {
         System.out.println("\tcreate -> create product");
         System.out.println("\tdelete -> delete a product");
         System.out.println("\tchoose -> choose a product");
+        System.out.println("\tprint -> list products");
         System.out.println("\tback -> go back to choose a category");
         System.out.println("\tmain -> return to main menu");
     }
@@ -103,6 +114,7 @@ public class TrackerApp {
         System.out.println("\tcreate -> create product account");
         System.out.println("\tdelete -> delete a product account");
         System.out.println("\tchoose -> choose a product account to update");
+        System.out.println("\tprint -> list product accounts");
         System.out.println("\tback -> go back to choose a product");
         System.out.println("\tmain -> return to main menu");
     }
@@ -119,31 +131,28 @@ public class TrackerApp {
         return input.next();
     }
 
-    // EFFECTS: displays menu of options for product account to update
+    // EFFECTS: enters option to update product account
     private void displayProductAccountUpdate(String command, Category category,
                                              Product product, ProductAccount productAccount) {
         if (command.equals("cost")) {
             System.out.print("Enter a price: $");
-            double newCost = input.nextDouble();
-            productAccount.setCost(newCost);
+            productAccount.setCost(input.nextDouble());
         } else if (command.equals("date")) {
             System.out.print("Enter a date(yyyy-MM-dd): ");
-            String newDate = input.next();
-            productAccount.setDate(newDate);
+            productAccount.setDate(input.next());
         } else if (command.equals("add")) {
             System.out.print("Enter an amount to add: ");
-            int amountToAdd = input.nextInt();
-            productAccount.addAmount(amountToAdd);
+            productAccount.addAmount(input.nextInt());
         } else if (command.equals("remove")) {
             System.out.print("Enter an amount to remove: ");
-            int amountToRemove = input.nextInt();
-            productAccount.removeAmount(amountToRemove);
+            productAccount.removeAmount(input.nextInt());
         } else if (command.equals("back")) {
             chooseProductAccount(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
+            displayProductAccountUpdate(command, category, product, productAccount);
         }
     }
 
@@ -176,7 +185,7 @@ public class TrackerApp {
             if (i.getName().equals(choice)) {
                 categoryManager.removeCategory(i);
                 System.out.println("Category " + i.getName() + " deleted.");
-                mainMenu();
+                return;
             }
         }
 
@@ -193,7 +202,7 @@ public class TrackerApp {
         for (Category i: categoryManager.getCategories()) {
             if (i.getName().equals(choice)) {
                 chosenCategory(i);
-                mainMenu();
+                return;
             }
         }
 
@@ -211,12 +220,15 @@ public class TrackerApp {
             createProduct(category);
         } else if (command.equals("choose")) {
             chooseProduct(category);
+        } else if (command.equals("print")) {
+            listProducts(category);
+            chosenCategory(category);
         } else if (command.equals("delete")) {
             deleteProduct(category);
         } else if (command.equals("back")) {
             chooseCategory();
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             chosenCategory(category);
@@ -275,7 +287,7 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             chosenCategory(category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             categoryStats(category);
@@ -312,7 +324,7 @@ public class TrackerApp {
                 category.removeProduct(i);
                 System.out.println("Product " + i.getName() + " deleted.");
                 chosenCategory(category);
-                mainMenu();
+                return;
             }
         }
 
@@ -329,7 +341,7 @@ public class TrackerApp {
         for (Product i: category.getProductList()) {
             if (i.getName().equals(choice)) {
                 chosenProduct(i, category);
-                mainMenu();
+                return;
             }
         }
 
@@ -348,12 +360,15 @@ public class TrackerApp {
             createProductAccount(product, category);
         } else if (command.equals("choose")) {
             chooseProductAccount(product, category);
+        } else if (command.equals("print")) {
+            listProductAccounts(product);
+            chosenProduct(product, category);
         } else if (command.equals("delete")) {
             deleteProductAccount(product, category);
         } else if (command.equals("back")) {
             chooseProduct(category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             chosenProduct(product, category);
@@ -401,15 +416,13 @@ public class TrackerApp {
         if (command.equals("cost")) {
             String choices = productCostStatChoices();
             productCostCommand(choices, product, category);
-            productStats(product, category);
         } else if (command.equals("amount")) {
             String choices = productAmountStatChoices();
             productAmountCommand(choices, product, category);
-            productStats(product, category);
         } else if (command.equals("back")) {
             chosenProduct(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             productStats(product, category);
@@ -454,7 +467,7 @@ public class TrackerApp {
         }  else if (command.equals("back")) {
             productStats(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             productStats(product, category);
@@ -499,7 +512,7 @@ public class TrackerApp {
         } else if (command.equals("back")) {
             productStats(product, category);
         } else if (command.equals("main")) {
-            mainMenu();
+            return;
         } else {
             System.out.println("Selection not valid...");
             productStats(product, category);
@@ -541,7 +554,7 @@ public class TrackerApp {
                 product.removeProductAccount(i);
                 System.out.println("Product Account deleted.");
                 chosenProduct(product, category);
-                mainMenu();
+                return;
             }
         }
 
@@ -559,7 +572,7 @@ public class TrackerApp {
         for (ProductAccount i: product.getProductAccounts()) {
             if (i.getDate().equals(choice)) {
                 chosenProductAccount(i, product, category);
-                mainMenu();
+                return;
             }
         }
 
@@ -574,5 +587,28 @@ public class TrackerApp {
         displayProductAccountUpdate(command, category, product, productAccount);
 
         chosenProduct(product, category);
+    }
+
+    // EFFECTS: saves the categoryManager to file
+    private void saveCategoryManager() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(categoryManager);
+            jsonWriter.close();
+            System.out.println("Saved " + categoryManager.getName() + " to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads categoryManager from file
+    private void loadCategoryManager() {
+        try {
+            categoryManager = jsonReader.readCM();
+            System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
     }
 }
