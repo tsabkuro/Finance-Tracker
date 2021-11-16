@@ -5,7 +5,7 @@ import java.util.ArrayList;
 // Represents a product having a name and list of product accounts
 public class Product {
     private String name;        // the product name
-    private ArrayList<ProductAccount> productAccounts;
+    private ArrayList<ProductAccount> productAccounts; // list of product accounts
 
     /*
      * REQUIRES: productName has a non-zero length and is unique

@@ -26,17 +26,17 @@ public class TrackerApp {
         init();
 
         while (running) {
-            displayCategoryManagerChoice();
-            command = input.next();
-            command = command.toLowerCase();
-
-            if (command.equals("q")) {
-                running = false;
-            } else {
-                processCommand(command);
-            }
+            mainMenu();
+//            displayCategoryManagerChoice();
+//            command = input.next();
+//            command = command.toLowerCase();
+//
+//            if (command.equals("q")) {
+//                running = false;
+//            } else {
+//                processCommand(command);
+//            }
         }
-
         System.out.println("\nProcess ended!");
     }
 
@@ -119,6 +119,7 @@ public class TrackerApp {
         return input.next();
     }
 
+    // EFFECTS: displays menu of options for product account to update
     private void displayProductAccountUpdate(String command, Category category,
                                              Product product, ProductAccount productAccount) {
         if (command.equals("cost")) {

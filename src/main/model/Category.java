@@ -2,12 +2,12 @@ package model;
 
 import java.util.ArrayList;
 
-// Represents category of product having an id and name
+// Represents category of product having an id, name, and list of products
 public class Category {
     private static int nextCategoryId = 1;  // tracks id of category
     private int id;                        // category id
     private String name;                   // category name
-    private ArrayList<Product> productList;
+    private ArrayList<Product> productList; // list of products
 
     /*
      * REQUIRES: categoryName has a non-zero length and is unique
