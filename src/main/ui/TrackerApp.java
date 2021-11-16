@@ -1,7 +1,5 @@
 package ui;
 
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,7 +8,6 @@ import model.CategoryManager;
 import model.Product;
 import model.ProductAccount;
 import model.Category;
-import org.json.JSONObject;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
