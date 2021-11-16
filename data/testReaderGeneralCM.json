@@ -1,0 +1,27 @@
+{
+  "name": "Main",
+  "categories": [
+    {
+      "name": "Food",
+      "products": [{
+        "product accounts": [
+          {
+            "date": "2002-12-12",
+            "amount": 12,
+            "cost": 213.1
+          },
+          {
+            "date": "2002-08-01",
+            "amount": 90,
+            "cost": 218.21
+          }
+        ],
+        "name": "Apple"
+      }]
+    },
+    {
+      "name": "Appliances",
+      "products": []
+    }
+  ]
+}

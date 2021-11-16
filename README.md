@@ -17,3 +17,6 @@ important. Managing your money is a great way to know where to cut costs and ach
 - As a user, I want to be able to delete a category
 - As a user, I want to be able to delete a product
 - As a user, I want to be able to see the money spent on different products/categories
+
+- As a user, I want to be able to save the state of all product accounts, products, and categories to file
+- As a user, I want to be able to load my finance tracker from file

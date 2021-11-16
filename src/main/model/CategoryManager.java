@@ -1,11 +1,32 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 
-// Represents category manager with list of categories
-public class CategoryManager {
-    private ArrayList<Category> categories = new ArrayList<Category>();
+// Represents category manager having a list of categories
+public class CategoryManager implements Writable {
+    private String name;
+    private ArrayList<Category> categories; // list of categories
 
+    // EFFECTS: constructs workroom with a name and empty list of thingies
+    public CategoryManager(String name) {
+        this.name = name;
+        categories = new ArrayList<>();
+    }
+
+    /*
+     * EFFECTS: returns name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /*
+    * EFFECTS: returns list of categories
+    */
     public ArrayList<Category> getCategories() {
         return categories;
     }
@@ -34,5 +55,24 @@ public class CategoryManager {
     public ArrayList<Category> removeCategory(Category category) {
         categories.remove(category);
         return categories;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("categories", categoriesToJson());
+        return json;
+    }
+
+    // EFFECTS: returns things in this workroom as a JSON array
+    private JSONArray categoriesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Category c : categories) {
+            jsonArray.put(c.toJson());
+        }
+
+        return jsonArray;
     }
 }
