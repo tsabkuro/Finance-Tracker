@@ -18,7 +18,12 @@ public class TemplateUI implements ActionListener {
     private static final String JSON_STORE = "./data/categoryManager.json";
 
     private CategoryManager categoryManager;
+    private CardLayout cl;
 
+    private JPanel mainPanel;
+    private JPanel productPanel;
+    private JPanel productAccountPanel;
+    private JPanel productAccountUpdatePanel;
 
     private JPanel buttonJPanel;
 
@@ -34,20 +39,17 @@ public class TemplateUI implements ActionListener {
 
     private JScrollPane productAccountListJScrollPane;
     private JList productAccountJList;
-    JTextField createProductAccountJTextField;
+    JTextField productAccountCostField;
+    JTextField productAccountDateField;
+    JTextField productAccountAmountField;
     private DefaultListModel productAccountListModel;
 
-
-    private JPanel mainPanel;
-
-    private CardLayout cl;
-
-    private JPanel productPanel;
-
-    private JPanel productAccountPanel;
-
+    JTextField productAccountUpdateCostField;
+    JTextField productAccountUpdateDateField;
+    JTextField productAccountUpdateAmountField;
 
     private Category chosenCategory;
+    private Product chosenProduct;
 
     // GUI for the category manager
     public TemplateUI() {
@@ -80,7 +82,7 @@ public class TemplateUI implements ActionListener {
         frame.setResizable(false);
     }
 
-
+    // Panel for inside a category
     public Component productPanelCreator(Category category) {
         productPanel = new JPanel();
         productPanel.setLayout(new GridLayout(2, 1));
@@ -89,6 +91,7 @@ public class TemplateUI implements ActionListener {
         return productPanel;
     }
 
+    // Panel for inside a product
     public Component productAccountPanelCreator(Product product) {
         productAccountPanel = new JPanel();
         productAccountPanel.setLayout(new GridLayout(2, 1));
@@ -97,8 +100,12 @@ public class TemplateUI implements ActionListener {
         return productAccountPanel;
     }
 
-    public static void main(String[] args) {
-        new TemplateUI();
+    // Panel for inside a product account to update
+    public Component productAccountUpdatePanelCreator(ProductAccount productAccount) {
+        productAccountUpdatePanel = new JPanel();
+        productAccountUpdatePanel.setLayout(new GridLayout(2, 1));
+        productAccountUpdatePanel.add(productAccountButtonMenu());
+        return productAccountUpdatePanel;
     }
 
     // CATEGORY LIST MENU
@@ -110,49 +117,45 @@ public class TemplateUI implements ActionListener {
 
         categoryJList = new JList(categoryListModel);
         categoryListJScrollPane = new JScrollPane(categoryJList);
-        categoryListJScrollPane.setPreferredSize(new Dimension(800, 400));
-
-        JPanel listPane = new JPanel();
-        listPane.setLayout(new BoxLayout(listPane, BoxLayout.PAGE_AXIS));
-        listPane.add(Box.createRigidArea(new Dimension(0,5)));
-        listPane.add(categoryListJScrollPane);
-        listPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        return categoryListJScrollPane;
+        return listMenuHelper(categoryJList, categoryListModel, categoryListJScrollPane);
     }
 
     // PRODUCT LIST MENU
     private JScrollPane productListMenu(Category category) {
-        productListModel = new DefaultListModel<Category>();
+        productListModel = new DefaultListModel<Product>();
         for (Product val : category.getProductList()) {
             productListModel.addElement(val);
         }
 
         productJList = new JList(productListModel);
         productListJScrollPane = new JScrollPane(productJList);
-        productListJScrollPane.setPreferredSize(new Dimension(800, 400));
-
-        JPanel listPane = new JPanel();
-        listPane.setLayout(new BoxLayout(listPane, BoxLayout.PAGE_AXIS));
-        listPane.add(Box.createRigidArea(new Dimension(0,5)));
-        listPane.add(productListJScrollPane);
-        listPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        return productListJScrollPane;
+        return listMenuHelper(productJList, productListModel, productListJScrollPane);
     }
 
     // PRODUCT ACCOUNT LIST MENU
     private JScrollPane productAccountListMenu(Product product) {
-        productAccountListModel = new DefaultListModel<Category>();
+        productAccountListModel = new DefaultListModel<Product>();
         for (ProductAccount val : product.getProductAccounts()) {
             productAccountListModel.addElement(val);
         }
 
+        productAccountJList = new JList(productAccountListModel);
+        productAccountListJScrollPane = new JScrollPane(productAccountJList);
         return listMenuHelper(productAccountJList, productAccountListModel, productAccountListJScrollPane);
     }
 
+//    // PRODUCT ACCOUNT UPDATE LIST MENU
+//    private JScrollPane productAccountUpdateListMenu(ProductAccount productAccount) {
+//        productAccountUpdateListModel = new DefaultListModel<ProductAccount>();
+//        for (ProductAccount val : product.getProductAccounts()) {
+//            productAccountListModel.addElement(val);
+//        }
+//
+//        return listMenuHelper(productAccountJList, productAccountListModel, productAccountListJScrollPane);
+//    }
+
     //list menu helper
     public JScrollPane listMenuHelper(JList jlist, DefaultListModel model, JScrollPane pane) {
-        jlist = new JList(model);
-        pane = new JScrollPane(jlist);
         pane.setPreferredSize(new Dimension(800, 400));
 
         JPanel listPane = new JPanel();
@@ -171,7 +174,7 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Create", "createCategory", buttonJPanel);
         jbuttonCreator("Select", "chooseCategory", buttonJPanel);
         jbuttonCreator("Delete", "deleteCategory", buttonJPanel);
-        jbuttonCreator("Print", "printCategory", buttonJPanel);
+//        jbuttonCreator("Print", "printCategory", buttonJPanel);
         jbuttonCreator("Save", "save", buttonJPanel);
         jbuttonCreator("Load", "loadCategory", buttonJPanel);
         return buttonJPanel;
@@ -186,9 +189,7 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Create", "createProduct", buttonJPanel);
         jbuttonCreator("Select", "chooseProduct", buttonJPanel);
         jbuttonCreator("Delete", "deleteProduct", buttonJPanel);
-        jbuttonCreator("Print", "printProduct", buttonJPanel);
         jbuttonCreator("Save", "save", buttonJPanel);
-        jbuttonCreator("back", "backToChooseCategory", buttonJPanel);
         jbuttonCreator("main", "main", buttonJPanel);
         return buttonJPanel;
     }
@@ -196,8 +197,12 @@ public class TemplateUI implements ActionListener {
     // BUTTON MENU FOR PRODUCT ACCOUNTS
     private JPanel productButtonMenu() {
         buttonJPanel = new JPanel();
-        createProductAccountJTextField = new JTextField(10);
-        buttonJPanel.add(createProductAccountJTextField);
+        productAccountCostField = new JTextField(10);
+        productAccountDateField = new JTextField(10);
+        productAccountAmountField = new JTextField(10);
+        buttonJPanel.add(productAccountCostField);
+        buttonJPanel.add(productAccountDateField);
+        buttonJPanel.add(productAccountAmountField);
         jbuttonCreator("Stats", "productStats", buttonJPanel);
         jbuttonCreator("Create", "createProductAccount", buttonJPanel);
         jbuttonCreator("Update", "chooseProductAccount", buttonJPanel);
@@ -205,6 +210,24 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Print", "printProductAccount", buttonJPanel);
         jbuttonCreator("Save", "save", buttonJPanel);
         jbuttonCreator("back", "backToChooseProduct", buttonJPanel);
+        jbuttonCreator("main", "main", buttonJPanel);
+        return buttonJPanel;
+    }
+
+
+    // BUTTON MENU FOR PRODUCT ACCOUNT UPDATE
+    private JPanel productAccountButtonMenu() {
+        buttonJPanel = new JPanel();
+        buttonJPanel.add(productAccountUpdateCostField);
+        jbuttonCreator("Update Cost", "updateCost", buttonJPanel);
+        buttonJPanel.add(productAccountUpdateDateField);
+        jbuttonCreator("Update Date", "updateDate", buttonJPanel);
+        buttonJPanel.add(productAccountUpdateAmountField);
+        jbuttonCreator("Add Amount", "addAmount", buttonJPanel);
+        buttonJPanel.add(productAccountUpdateAmountField);
+        jbuttonCreator("Remove Amount", "removeAmount", buttonJPanel);
+        jbuttonCreator("Save", "save", buttonJPanel);
+        jbuttonCreator("back", "backToChooseProductAccount", buttonJPanel);
         jbuttonCreator("main", "main", buttonJPanel);
         return buttonJPanel;
     }
@@ -222,6 +245,14 @@ public class TemplateUI implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         actionPerformedCategoryManager(e);
         actionPerformedCategory(e);
+        actionPerformedProduct(e);
+        if (e.getActionCommand().equals("main")) {
+            cl.show(mainPanel, "menu");
+        }
+
+        if (e.getActionCommand().equals("save")) {
+            return;
+        }
     }
 
     // Actions for inside a category manager
@@ -243,16 +274,16 @@ public class TemplateUI implements ActionListener {
         }
 
         if (e.getActionCommand().equals("deleteCategory")) {
-            Category test = (Category) categoryJList.getSelectedValue();
-            categoryManager.removeCategory(test);
-            categoryListModel.removeElement(test);
+            Category value = (Category) categoryJList.getSelectedValue();
+            categoryManager.removeCategory(value);
+            categoryListModel.removeElement(value);
         }
-
-        // delete this later
-        if (e.getActionCommand().equals("printCategory")) {
-            System.out.println(categoryManager.getCategories());
-            System.out.println(mainPanel.getComponents());
-        }
+//
+//        // delete this later
+//        if (e.getActionCommand().equals("printCategory")) {
+//            System.out.println(categoryManager.getCategories());
+//            System.out.println(mainPanel.getComponents());
+//        }
     }
 
     // Actions for inside a category
@@ -271,37 +302,67 @@ public class TemplateUI implements ActionListener {
         }
 
         if (e.getActionCommand().equals("chooseProduct")) {
-            Category value = (Category) categoryJList.getSelectedValue();
-            if (!(value == null)) {
-                cl.show(mainPanel, value.getName());
+            chosenProduct = (Product) productJList.getSelectedValue();
+            if (!(chosenProduct == null)) {
+                cl.show(mainPanel, chosenProduct.getName());
             }
         }
 
         if (e.getActionCommand().equals("deleteProduct")) {
-            Category test = (Category) categoryJList.getSelectedValue();
-            categoryManager.removeCategory(test);
-            categoryListModel.removeElement(test);
+            Product value = (Product) productJList.getSelectedValue();
+            chosenCategory.removeProduct(value);
+            productListModel.removeElement(value);
+        }
+    }
+
+    // Actions for inside a product
+    public void actionPerformedProduct(ActionEvent e) {
+        if (e.getActionCommand().equals("productStats")) {
+            return;
         }
 
-        // delete this later
-        if (e.getActionCommand().equals("printProduct")) {
-            System.out.println(chosenCategory.getProductList());
-            System.out.println(mainPanel.getComponents());
+        if (e.getActionCommand().equals("createProductAccount")) {
+            ProductAccount productAccountToBeAdded =
+                    new ProductAccount(Integer.parseInt(productAccountAmountField.getText()),
+                            Double.parseDouble(productAccountCostField.getText()),
+                            productAccountDateField.getText());
+            chosenProduct.addProductAccount(productAccountToBeAdded);
+            // PROBLEM WITH HERE
+            mainPanel.add(productAccountUpdatePanelCreator(productAccountToBeAdded),
+                    productAccountDateField.getText());
+            // PROBLEM ABOVE
+            if (chosenProduct.getProductAccounts().size() > productAccountListModel.size()) {
+                productAccountListModel.add(0, productAccountToBeAdded);
+            }
         }
 
-        if (e.getActionCommand().equals("backToChooseCategory")) {
+        if (e.getActionCommand().equals("chooseProductAccount")) {
+            chosenProduct = (Product) productJList.getSelectedValue();
+            if (!(chosenProduct == null)) {
+                cl.show(mainPanel, chosenProduct.getName());
+            }
+        }
+
+        if (e.getActionCommand().equals("deleteProductAccount")) {
+            Product value = (Product) productJList.getSelectedValue();
+            chosenCategory.removeProduct(value);
+            productListModel.removeElement(value);
+        }
+
+        //USED TO BE PART OF CATEGORY MANAGER
+        if (e.getActionCommand().equals("printProductAccount")) {
             System.out.println(categoryManager.getCategories());
             System.out.println(mainPanel.getComponents());
         }
 
-        if (e.getActionCommand().equals("main")) {
-            cl.show(mainPanel, "menu");
+        if (e.getActionCommand().equals("backToChooseProduct")) {
+            Product value = (Product) productJList.getSelectedValue();
+            chosenCategory.removeProduct(value);
+            productListModel.removeElement(value);
         }
     }
 
-
-
-//    public static void main(String[] args) {
-//        new TemplateUI();
-//    }
+    public static void main(String[] args) {
+        new TemplateUI();
+    }
 }
