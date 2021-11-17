@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 
-public class TemplateUI extends JFrame implements ActionListener {
+public class TemplateUI implements ActionListener {
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
     private static final String JSON_STORE = "./data/categoryManager.json";
@@ -34,85 +34,50 @@ public class TemplateUI extends JFrame implements ActionListener {
 
     private JPanel mainPanel;
 
+    private CardLayout cl;
+
     // GUI for the category manager
     public TemplateUI() {
-        super("Finance Tracker");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        ((JPanel) getContentPane()).setBorder(new EmptyBorder(50, 50, 50, 50));
-        setLayout(new FlowLayout());
+        JFrame frame = new JFrame("Finance Tracker");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        ((JPanel) frame.getContentPane()).setBorder(new EmptyBorder(50, 50, 50, 50));
+        frame.setLayout(new FlowLayout());
         categoryManager = new CategoryManager("Main");
 
-
-        add(categoryListMenu());
-        add(categoryManagerButtonMenu());
-
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-        setResizable(false);
-    }
-
-
-
-
-
-    public void addComponentToPane(Container pane) {
-        //Put the JComboBox in a JPanel to get a nicer look.
-//        JPanel comboBoxPane = new JPanel(); //use FlowLayout
-//        String comboBoxItems[] = { BUTTONPANEL, TEXTPANEL };
-//        JComboBox cb = new JComboBox(comboBoxItems);
-//        cb.setEditable(false);
-//        cb.addItemListener(this);
-//        comboBoxPane.add(cb);
-
-
-        //Create the panel that contains the "cards".
         mainPanel = new JPanel(new CardLayout());
 
-        mainPanel.add(categoryListMenu(), "menu");
-        mainPanel.add(productListMenu(), "productListMenu");
+        cl = (CardLayout)(mainPanel.getLayout());
 
-        pane.add(mainPanel, BorderLayout.CENTER);
-        pane.add(categoryManagerButtonMenu(), BorderLayout.PAGE_END);
+        JPanel categoryPanel = new JPanel();
+        categoryPanel.setLayout(new GridLayout(2, 1));
+
+        categoryPanel.add(categoryListMenu());
+        categoryPanel.add(categoryManagerButtonMenu());
+
+        mainPanel.add(categoryPanel, "menu");
+        mainPanel.add(productPanelCreator(new Category("test")), "test");
+
+        frame.add(mainPanel, BorderLayout.CENTER);
+
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        frame.setResizable(false);
     }
 
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event dispatch thread.
-     */
-    private static void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new JFrame("CardLayoutDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public Component productPanelCreator(Category category) {
+        JPanel productPanel = new JPanel();
+        productPanel.setLayout(new GridLayout(2, 1));
 
-        //Create and set up the content pane.
-        TemplateUI demo = new TemplateUI();
-        demo.addComponentToPane(frame.getContentPane());
-
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
+        productPanel.add(productListMenu(category));
+        productPanel.add(categoryButtonMenu());
+        return productPanel;
     }
 
     public static void main(String[] args) {
-        /* Turn off metal's use of bold fonts */
-        UIManager.put("swing.boldMetal", Boolean.FALSE);
-
-        //Schedule a job for the event dispatch thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        new TemplateUI();
     }
-
-
-
-
-
 
     // CATEGORY LIST MENU
     private JScrollPane categoryListMenu() {
@@ -134,9 +99,9 @@ public class TemplateUI extends JFrame implements ActionListener {
     }
 
     // PRODUCT LIST MENU
-    private JScrollPane productListMenu() {
+    private JScrollPane productListMenu(Category category) {
         productListModel = new DefaultListModel<Category>();
-        for (Product val : categoryManager.getCategories().get(0).getProductList()) {
+        for (Product val : category.getProductList()) {
             productListModel.addElement(val);
         }
 
@@ -194,20 +159,22 @@ public class TemplateUI extends JFrame implements ActionListener {
 //    This is the method that is called when the the JButton btn is clicked
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("createCategory")) {
-            categoryManager.addCategory(new Category(createCategoryJTextField.getText()));
+            Category categoryToBeAdded = new Category(createCategoryJTextField.getText());
+            categoryManager.addCategory(categoryToBeAdded);
+//            mainPanel.add(productPanelCreator(categoryToBeAdded), createCategoryJTextField.getText());
             if (categoryManager.getCategories().size() > categoryListModel.size()) {
-                categoryListModel.add(0,
-                        categoryManager.getCategories().get(categoryManager.getCategories().size() - 1));
+                categoryListModel.add(0, categoryToBeAdded);
             }
         }
-        if (e.getActionCommand().equals("chooseCategory")) {
-            Category test = (Category) categoryJList.getSelectedValue();
-            System.out.println(test);
 
-            CardLayout cl = (CardLayout)(mainPanel.getLayout());
-            cl.show(mainPanel, e.getActionCommand());
-            System.out.println(e.getActionCommand());
+        if (e.getActionCommand().equals("chooseCategory")) {
+            Category value = (Category) categoryJList.getSelectedValue();
+            System.out.println(value);
+            if (!(value == null)) {
+                cl.show(mainPanel, value.getName());
+            }
         }
+
         if (e.getActionCommand().equals("deleteCategory")) {
             Category test = (Category) categoryJList.getSelectedValue();
             categoryManager.removeCategory(test);
@@ -216,6 +183,7 @@ public class TemplateUI extends JFrame implements ActionListener {
 
         if (e.getActionCommand().equals("printCategory")) {
             System.out.println(categoryManager.getCategories());
+            System.out.println(mainPanel.getComponents());
         }
     }
 
