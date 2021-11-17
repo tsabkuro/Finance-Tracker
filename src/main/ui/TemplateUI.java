@@ -36,6 +36,8 @@ public class TemplateUI implements ActionListener {
 
     private CardLayout cl;
 
+    private JPanel productPanel;
+
     // GUI for the category manager
     public TemplateUI() {
         JFrame frame = new JFrame("Finance Tracker");
@@ -57,6 +59,7 @@ public class TemplateUI implements ActionListener {
 
         mainPanel.add(categoryPanel, "menu");
         mainPanel.add(productPanelCreator(new Category("test")), "test");
+        cl.show(mainPanel, "menu");
 
         frame.add(mainPanel, BorderLayout.CENTER);
 
@@ -66,11 +69,12 @@ public class TemplateUI implements ActionListener {
         frame.setResizable(false);
     }
 
-    public Component productPanelCreator(Category category) {
-        JPanel productPanel = new JPanel();
-        productPanel.setLayout(new GridLayout(2, 1));
 
-        productPanel.add(productListMenu(category));
+    public Component productPanelCreator(Category category) {
+        productPanel = new JPanel();
+        productPanel.setLayout(new GridLayout(2, 1));
+//        ITS A PROBLEM WITH THIS
+//        productPanel.add(productListMenu(category));
         productPanel.add(categoryButtonMenu());
         return productPanel;
     }
@@ -156,7 +160,7 @@ public class TemplateUI implements ActionListener {
         return createdJButton;
     }
 
-//    This is the method that is called when the the JButton btn is clicked
+    //    This is the method that is called when the the JButton btn is clicked
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("createCategory")) {
             Category categoryToBeAdded = new Category(createCategoryJTextField.getText());
