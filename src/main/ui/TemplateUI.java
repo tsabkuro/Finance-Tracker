@@ -295,8 +295,7 @@ public class TemplateUI implements ActionListener {
         }
 
         if (e.getActionCommand().equals("main")) {
-            System.out.println(categoryManager.getCategories());
-            System.out.println(mainPanel.getComponents());
+            cl.show(mainPanel, "menu");
         }
     }
 
