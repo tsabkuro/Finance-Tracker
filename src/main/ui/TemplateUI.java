@@ -1,5 +1,10 @@
 package ui;
 
+
+// https://stackoverflow.com/questions/11093326/restricting-jtextfield-input-to-integers
+// https://stackoverflow.com/questions/1313390/is-there-any-way-to-accept-only-numeric-values-in-a-jtextfield
+// https://stackoverflow.com/questions/25769024/handling-date-format-in-jspinner-with-spindatemodel THIS THE FIRST ONE
+
 import model.CategoryManager;
 import model.Category;
 import model.Product;
@@ -7,10 +12,14 @@ import model.ProductAccount;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.util.Date;
 
 public class TemplateUI implements ActionListener {
     private static final int WIDTH = 1024;
@@ -43,6 +52,9 @@ public class TemplateUI implements ActionListener {
     JTextField productAccountDateField;
     JTextField productAccountAmountField;
     private DefaultListModel productAccountListModel;
+
+    JSpinner test;
+    SpinnerDateModel spinMod;
 
     JTextField productAccountUpdateCostField;
     JTextField productAccountUpdateDateField;
@@ -80,7 +92,6 @@ public class TemplateUI implements ActionListener {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setResizable(false);
     }
 
     // Panel for inside a category
@@ -198,6 +209,11 @@ public class TemplateUI implements ActionListener {
     // BUTTON MENU FOR PRODUCT ACCOUNTS
     private JPanel productButtonMenu() {
         buttonJPanel = new JPanel();
+//        spinMod = new SpinnerDateModel();
+//        test = new JSpinner();
+//        test.setValue(new Date());
+//        test.setEditor(new JSpinner.DateEditor(test,"dd.MM.yyyy"));
+//        buttonJPanel.add(test);
         productAccountCostField = new JTextField(10);
         productAccountDateField = new JTextField(10);
         productAccountAmountField = new JTextField(10);
@@ -219,6 +235,11 @@ public class TemplateUI implements ActionListener {
     // BUTTON MENU FOR PRODUCT ACCOUNT UPDATE
     private JPanel productAccountButtonMenu() {
         buttonJPanel = new JPanel();
+        spinMod = new SpinnerDateModel();
+        test = new JSpinner();
+        test.setValue(new Date());//this doesn't work properly with the custom format
+        test.setEditor(new JSpinner.DateEditor(test,"dd.MM.yyyy"));
+        buttonJPanel.add(test);
         productAccountUpdateCostField = new JTextField(10);
         productAccountUpdateDateField = new JTextField(10);
         productAccountUpdateAmountField = new JTextField(10);
@@ -330,10 +351,8 @@ public class TemplateUI implements ActionListener {
                             Double.parseDouble(productAccountCostField.getText()),
                             productAccountDateField.getText());
             chosenProduct.addProductAccount(productAccountToBeAdded);
-            // PROBLEM WITH HERE
             mainPanel.add(productAccountUpdatePanelCreator(productAccountToBeAdded),
                     productAccountDateField.getText());
-            // PROBLEM ABOVE
             if (chosenProduct.getProductAccounts().size() > productAccountListModel.size()) {
                 productAccountListModel.add(0, productAccountToBeAdded);
             }
@@ -354,14 +373,11 @@ public class TemplateUI implements ActionListener {
 
         //USED TO BE PART OF CATEGORY MANAGER
         if (e.getActionCommand().equals("printProductAccount")) {
-            System.out.println(categoryManager.getCategories());
-            System.out.println(mainPanel.getComponents());
+            System.out.println(chosenProduct.getProductAccounts());
         }
 
         if (e.getActionCommand().equals("backToChooseProduct")) {
-            Product value = (Product) productJList.getSelectedValue();
-            chosenCategory.removeProduct(value);
-            productListModel.removeElement(value);
+            cl.show(mainPanel, chosenProduct.getName());
         }
     }
 
