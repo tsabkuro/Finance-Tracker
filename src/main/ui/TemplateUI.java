@@ -50,6 +50,7 @@ public class TemplateUI implements ActionListener {
 
     private Category chosenCategory;
     private Product chosenProduct;
+    private ProductAccount chosenProductAccount;
 
     // GUI for the category manager
     public TemplateUI() {
@@ -218,13 +219,15 @@ public class TemplateUI implements ActionListener {
     // BUTTON MENU FOR PRODUCT ACCOUNT UPDATE
     private JPanel productAccountButtonMenu() {
         buttonJPanel = new JPanel();
+        productAccountUpdateCostField = new JTextField(10);
+        productAccountUpdateDateField = new JTextField(10);
+        productAccountUpdateAmountField = new JTextField(10);
         buttonJPanel.add(productAccountUpdateCostField);
         jbuttonCreator("Update Cost", "updateCost", buttonJPanel);
         buttonJPanel.add(productAccountUpdateDateField);
         jbuttonCreator("Update Date", "updateDate", buttonJPanel);
         buttonJPanel.add(productAccountUpdateAmountField);
         jbuttonCreator("Add Amount", "addAmount", buttonJPanel);
-        buttonJPanel.add(productAccountUpdateAmountField);
         jbuttonCreator("Remove Amount", "removeAmount", buttonJPanel);
         jbuttonCreator("Save", "save", buttonJPanel);
         jbuttonCreator("back", "backToChooseProductAccount", buttonJPanel);
@@ -337,9 +340,9 @@ public class TemplateUI implements ActionListener {
         }
 
         if (e.getActionCommand().equals("chooseProductAccount")) {
-            chosenProduct = (Product) productJList.getSelectedValue();
-            if (!(chosenProduct == null)) {
-                cl.show(mainPanel, chosenProduct.getName());
+            chosenProductAccount = (ProductAccount) productAccountJList.getSelectedValue();
+            if (!(chosenProductAccount == null)) {
+                cl.show(mainPanel, chosenProductAccount.getDate());
             }
         }
 
