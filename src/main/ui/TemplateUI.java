@@ -12,13 +12,9 @@ import model.ProductAccount;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.util.Date;
 
 public class TemplateUI implements ActionListener {
@@ -38,27 +34,29 @@ public class TemplateUI implements ActionListener {
 
     private JScrollPane categoryListJScrollPane;
     private JList categoryJList;
-    JTextField createCategoryJTextField;
+    private JTextField createCategoryJTextField;
     private DefaultListModel categoryListModel;
 
     private JScrollPane productListJScrollPane;
     private JList productJList;
-    JTextField createProductJTextField;
+    private JTextField createProductJTextField;
     private DefaultListModel productListModel;
 
     private JScrollPane productAccountListJScrollPane;
     private JList productAccountJList;
-    JTextField productAccountCostField;
-    JTextField productAccountDateField;
-    JTextField productAccountAmountField;
+    private JLabel productAccountCostLabel;
+    private JTextField productAccountCostField;
+    private JLabel productAccountDateLabel;
+    private JTextField productAccountDateField;
+    private JLabel productAccountAmountLabel;
+    private JTextField productAccountAmountField;
     private DefaultListModel productAccountListModel;
 
-    JSpinner test;
-    SpinnerDateModel spinMod;
+    private JPanel productAccountToBeAddedPanel;
 
-    JTextField productAccountUpdateCostField;
-    JTextField productAccountUpdateDateField;
-    JTextField productAccountUpdateAmountField;
+    private JTextField productAccountUpdateCostField;
+    private JTextField productAccountUpdateDateField;
+    private JTextField productAccountUpdateAmountField;
 
     private Category chosenCategory;
     private Product chosenProduct;
@@ -113,7 +111,7 @@ public class TemplateUI implements ActionListener {
     }
 
     // Panel for inside a product account to update
-    public Component productAccountUpdatePanelCreator(ProductAccount productAccount) {
+    public JPanel productAccountUpdatePanelCreator(ProductAccount productAccount) {
         productAccountUpdatePanel = new JPanel();
         productAccountUpdatePanel.setLayout(new GridLayout(2, 1));
         productAccountUpdatePanel.add(productAccountButtonMenu());
@@ -202,6 +200,7 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Select", "chooseProduct", buttonJPanel);
         jbuttonCreator("Delete", "deleteProduct", buttonJPanel);
         jbuttonCreator("Save", "save", buttonJPanel);
+        jbuttonCreator("Back", "backToChooseCategory", buttonJPanel);
         jbuttonCreator("main", "main", buttonJPanel);
         return buttonJPanel;
     }
@@ -209,16 +208,21 @@ public class TemplateUI implements ActionListener {
     // BUTTON MENU FOR PRODUCT ACCOUNTS
     private JPanel productButtonMenu() {
         buttonJPanel = new JPanel();
-//        spinMod = new SpinnerDateModel();
-//        test = new JSpinner();
-//        test.setValue(new Date());
-//        test.setEditor(new JSpinner.DateEditor(test,"dd.MM.yyyy"));
-//        buttonJPanel.add(test);
+
+        productAccountCostLabel = new JLabel("Cost");
         productAccountCostField = new JTextField(10);
+        productAccountCostLabel.setLabelFor(productAccountCostField);
+        productAccountDateLabel = new JLabel("Date (yyyy-MM-dd)");
         productAccountDateField = new JTextField(10);
+        productAccountDateLabel.setLabelFor(productAccountDateField);
+        productAccountAmountLabel = new JLabel("Amount");
         productAccountAmountField = new JTextField(10);
+        productAccountAmountLabel.setLabelFor(productAccountAmountField);
+        buttonJPanel.add(productAccountCostLabel);
         buttonJPanel.add(productAccountCostField);
+        buttonJPanel.add(productAccountDateLabel);
         buttonJPanel.add(productAccountDateField);
+        buttonJPanel.add(productAccountAmountLabel);
         buttonJPanel.add(productAccountAmountField);
         jbuttonCreator("Stats", "productStats", buttonJPanel);
         jbuttonCreator("Create", "createProductAccount", buttonJPanel);
@@ -235,11 +239,6 @@ public class TemplateUI implements ActionListener {
     // BUTTON MENU FOR PRODUCT ACCOUNT UPDATE
     private JPanel productAccountButtonMenu() {
         buttonJPanel = new JPanel();
-        spinMod = new SpinnerDateModel();
-        test = new JSpinner();
-        test.setValue(new Date());//this doesn't work properly with the custom format
-        test.setEditor(new JSpinner.DateEditor(test,"dd.MM.yyyy"));
-        buttonJPanel.add(test);
         productAccountUpdateCostField = new JTextField(10);
         productAccountUpdateDateField = new JTextField(10);
         productAccountUpdateAmountField = new JTextField(10);
@@ -270,6 +269,7 @@ public class TemplateUI implements ActionListener {
         actionPerformedCategoryManager(e);
         actionPerformedCategory(e);
         actionPerformedProduct(e);
+        actionPerformedProductAccount(e);
         if (e.getActionCommand().equals("main")) {
             cl.show(mainPanel, "menu");
         }
@@ -337,6 +337,10 @@ public class TemplateUI implements ActionListener {
             chosenCategory.removeProduct(value);
             productListModel.removeElement(value);
         }
+
+        if (e.getActionCommand().equals("backToChooseCategory")) {
+            cl.show(mainPanel, "menu");
+        }
     }
 
     // Actions for inside a product
@@ -351,7 +355,8 @@ public class TemplateUI implements ActionListener {
                             Double.parseDouble(productAccountCostField.getText()),
                             productAccountDateField.getText());
             chosenProduct.addProductAccount(productAccountToBeAdded);
-            mainPanel.add(productAccountUpdatePanelCreator(productAccountToBeAdded),
+            productAccountToBeAddedPanel = productAccountUpdatePanelCreator(productAccountToBeAdded);
+            mainPanel.add(productAccountToBeAddedPanel,
                     productAccountDateField.getText());
             if (chosenProduct.getProductAccounts().size() > productAccountListModel.size()) {
                 productAccountListModel.add(0, productAccountToBeAdded);
@@ -374,9 +379,42 @@ public class TemplateUI implements ActionListener {
         //USED TO BE PART OF CATEGORY MANAGER
         if (e.getActionCommand().equals("printProductAccount")) {
             System.out.println(chosenProduct.getProductAccounts());
+            System.out.println(chosenProduct.getProductAccounts().get(0).getAmount());
+            System.out.println(chosenProduct.getProductAccounts().get(0).getCost());
+            System.out.println(chosenProduct.getProductAccounts().get(0).getDate());
         }
 
         if (e.getActionCommand().equals("backToChooseProduct")) {
+            cl.show(mainPanel, chosenCategory.getName());
+        }
+    }
+
+    // Actions for inside a product account
+    public void actionPerformedProductAccount(ActionEvent e) {
+        if (e.getActionCommand().equals("updateCost")) {
+            chosenProductAccount.setCost(Double.parseDouble(productAccountUpdateCostField.getText()));
+            cl.show(mainPanel, chosenProduct.getName());
+        }
+
+        if (e.getActionCommand().equals("updateDate")) {
+            mainPanel.remove(productAccountToBeAddedPanel);
+            chosenProductAccount.setDate(productAccountUpdateDateField.getText());
+            productAccountToBeAddedPanel = productAccountUpdatePanelCreator(chosenProductAccount);
+            mainPanel.add(productAccountToBeAddedPanel, chosenProductAccount.getDate());
+            cl.show(mainPanel, chosenProduct.getName());
+        }
+
+        if (e.getActionCommand().equals("addAmount")) {
+            chosenProductAccount.addAmount(Integer.parseInt(productAccountUpdateAmountField.getText()));
+            cl.show(mainPanel, chosenProduct.getName());
+        }
+
+        if (e.getActionCommand().equals("removeAmount")) {
+            chosenProductAccount.removeAmount(Integer.parseInt(productAccountUpdateAmountField.getText()));
+            cl.show(mainPanel, chosenProduct.getName());
+        }
+
+        if (e.getActionCommand().equals("backToChooseProductAccount")) {
             cl.show(mainPanel, chosenProduct.getName());
         }
     }
