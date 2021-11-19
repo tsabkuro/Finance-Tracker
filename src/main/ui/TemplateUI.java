@@ -434,9 +434,7 @@ public class TemplateUI implements ActionListener {
         totalAmountLabelProduct = new JLabel();
     }
 
-    public void productStatsHelper() {
-        productStatsHelperHelper();
-
+    public void productStatsHelperHelper2() {
         productStats.add(dayCostLabelProduct);
         productStats.add(dayCostInputProduct);
         jbuttonCreator("Day Cost", "getDayCostProduct", productStats);
@@ -448,7 +446,9 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Year Cost", "getYearCostProduct", productStats);
         productStats.add(totalCostLabelProduct);
         jbuttonCreator("Total Cost", "getTotalCostProduct", productStats);
+    }
 
+    public void productStatsHelperHelper3() {
         productStats.add(dayAmountLabelProduct);
         productStats.add(dayAmountInputProduct);
         jbuttonCreator("Day Amount", "getDayAmountProduct", productStats);
@@ -464,13 +464,13 @@ public class TemplateUI implements ActionListener {
         mainPanel.add(productStats, "productStats");
     }
 
-    // Actions for inside a product
-    public void actionPerformedProduct(ActionEvent e) {
-        if (e.getActionCommand().equals("productStats")) {
-            productStatsHelper();
-            cl.show(mainPanel, "productStats");
-        }
+    public void productStatsHelper() {
+        productStatsHelperHelper();
+        productStatsHelperHelper2();
+        productStatsHelperHelper3();
+    }
 
+    public void actionPerformedProductHelper(ActionEvent e) {
         if (e.getActionCommand().equals("createProductAccount")) {
             ProductAccount productAccountToBeAdded =
                     new ProductAccount(Integer.parseInt(productAccountAmountField.getText()),
@@ -482,6 +482,16 @@ public class TemplateUI implements ActionListener {
                 productAccountListModel.add(0, productAccountToBeAdded);
             }
         }
+    }
+
+    // Actions for inside a product
+    public void actionPerformedProduct(ActionEvent e) {
+        if (e.getActionCommand().equals("productStats")) {
+            productStatsHelper();
+            cl.show(mainPanel, "productStats");
+        }
+
+        actionPerformedProductHelper(e);
 
         if (e.getActionCommand().equals("chooseProductAccount")) {
             chosenProductAccount = (ProductAccount) productAccountJList.getSelectedValue();
