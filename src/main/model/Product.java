@@ -4,24 +4,33 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 // Represents a product having a name and list of product accounts
 public class Product implements Writable {
     private String name;        // the product name
     private ArrayList<ProductAccount> productAccounts; // list of product accounts
+    private DefaultListModel productAccountListModel; // model for list of product account
 
     /*
      * REQUIRES: productName has a non-zero length and is unique
      * EFFECTS: name on product set to productName
+     *          productAccounts is ArrayList of type ProductAccount
+     *          productAccountListModel is DefaultListModel of type ProductAccount
      */
     public Product(String productName) {
         name = productName;
         productAccounts = new ArrayList<ProductAccount>();
+        productAccountListModel = new DefaultListModel();
     }
 
     public String getName() {
         return name;
+    }
+
+    public DefaultListModel getProductAccountListModel() {
+        return productAccountListModel;
     }
 
     public ArrayList<ProductAccount> getProductAccounts() {

@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 // Represents category of product having an id, name and product list
@@ -12,17 +13,20 @@ public class Category implements Writable {
     private int id;                        // category id
     private String name;                   // category name
     private ArrayList<Product> productList; // list of products
+    private DefaultListModel productListModel; // model for list of products
 
     /*
      * REQUIRES: categoryName has a non-zero length and is unique
      * EFFECTS: name on category set to categoryName
      *          id on category is a positive integer and unique
      *          productList is ArrayList of type Product
+     *          productListModel is DefaultListModel of type Product
      */
     public Category(String categoryName) {
         id = nextCategoryId++;
         name = categoryName;
         productList = new ArrayList<Product>();
+        productListModel = new DefaultListModel();
     }
 
     public int getId() {
@@ -31,6 +35,10 @@ public class Category implements Writable {
 
     public String getName() {
         return name;
+    }
+
+    public DefaultListModel getProductListModel() {
+        return productListModel;
     }
 
     public ArrayList<Product> getProductList() {
