@@ -15,7 +15,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class TemplateUI implements ActionListener {
     private static final int WIDTH = 1024;
@@ -67,6 +68,15 @@ public class TemplateUI implements ActionListener {
     private JTextField monthCostInput;
     private JTextField yearCostInput;
 
+    private JPanel productStats;
+    private JTextField dayCostInputProduct;
+    private JTextField monthCostInputProduct;
+    private JTextField yearCostInputProduct;
+    private JTextField dayAmountInputProduct;
+    private JTextField monthAmountInputProduct;
+    private JTextField yearAmountInputProduct;
+
+
     private JLabel statOutput;
     private JPanel statWrapper;
 
@@ -74,6 +84,15 @@ public class TemplateUI implements ActionListener {
     private JLabel monthCostLabel;
     private JLabel yearCostLabel;
     private JLabel totalCostLabel;
+
+    private JLabel dayCostLabelProduct;
+    private JLabel monthCostLabelProduct;
+    private JLabel yearCostLabelProduct;
+    private JLabel totalCostLabelProduct;
+    private JLabel dayAmountLabelProduct;
+    private JLabel monthAmountLabelProduct;
+    private JLabel yearAmountLabelProduct;
+    private JLabel totalAmountLabelProduct;
 
     // GUI for the category manager
     public TemplateUI() {
@@ -167,16 +186,6 @@ public class TemplateUI implements ActionListener {
         return listMenuHelper(productAccountJList, productAccountListModel, productAccountListJScrollPane);
     }
 
-//    // PRODUCT ACCOUNT UPDATE LIST MENU
-//    private JScrollPane productAccountUpdateListMenu(ProductAccount productAccount) {
-//        productAccountUpdateListModel = new DefaultListModel<ProductAccount>();
-//        for (ProductAccount val : product.getProductAccounts()) {
-//            productAccountListModel.addElement(val);
-//        }
-//
-//        return listMenuHelper(productAccountJList, productAccountListModel, productAccountListJScrollPane);
-//    }
-
     //list menu helper
     public JScrollPane listMenuHelper(JList jlist, DefaultListModel model, JScrollPane pane) {
         pane.setPreferredSize(new Dimension(800, 400));
@@ -197,7 +206,6 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Create", "createCategory", buttonJPanel);
         jbuttonCreator("Select", "chooseCategory", buttonJPanel);
         jbuttonCreator("Delete", "deleteCategory", buttonJPanel);
-//        jbuttonCreator("Print", "printCategory", buttonJPanel);
         jbuttonCreator("Save", "save", buttonJPanel);
         jbuttonCreator("Load", "loadCategory", buttonJPanel);
         return buttonJPanel;
@@ -280,6 +288,8 @@ public class TemplateUI implements ActionListener {
         actionPerformedProduct(e);
         actionPerformedProductAccount(e);
         actionPerformedCategoryStats(e);
+        actionPerformedProductStats(e);
+        actionPerformedProductStatsAmount(e);
         if (e.getActionCommand().equals("main")) {
             cl.show(mainPanel, "menu");
         }
@@ -312,12 +322,6 @@ public class TemplateUI implements ActionListener {
             categoryManager.removeCategory(value);
             categoryListModel.removeElement(value);
         }
-//
-//        // delete this later
-//        if (e.getActionCommand().equals("printCategory")) {
-//            System.out.println(categoryManager.getCategories());
-//            System.out.println(mainPanel.getComponents());
-//        }
     }
 
     public void categoryStatsHelper() {
@@ -342,13 +346,13 @@ public class TemplateUI implements ActionListener {
         categoryStats.add(totalCostLabel);
         jbuttonCreator("Total Cost", "getTotalCostCategory", categoryStats);
         jbuttonCreator("Main", "main", categoryStats);
+        mainPanel.add(categoryStats, "categoryStats");
     }
 
     // Actions for inside a category
     public void actionPerformedCategory(ActionEvent e) {
         if (e.getActionCommand().equals("categoryStats")) {
             categoryStatsHelper();
-            mainPanel.add(categoryStats, "categoryStats");
             cl.show(mainPanel, "categoryStats");
         }
 
@@ -375,47 +379,105 @@ public class TemplateUI implements ActionListener {
         }
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
     public void actionPerformedCategoryStats(ActionEvent e) {
         if (e.getActionCommand().equals("getDayCostCategory")) {
-            dayCostLabel.setText(Double.toString(chosenCategory.getDayCost(dayCostInput.getText())));
+            dayCostLabel.setText(Double.toString(round(chosenCategory.getDayCost(dayCostInput.getText()), 2)));
             dayCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
             categoryStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getMonthCostCategory")) {
-            monthCostLabel.setText(Double.toString(chosenCategory.getMonthCost(monthCostInput.getText())));
+            monthCostLabel.setText(Double.toString(round(chosenCategory.getMonthCost(monthCostInput.getText()), 2)));
             monthCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
             categoryStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getYearCostCategory")) {
-            yearCostLabel.setText(Double.toString(chosenCategory.getYearCost(yearCostInput.getText()));
+            yearCostLabel.setText(Double.toString(round(chosenCategory.getYearCost(yearCostInput.getText()), 2)));
             yearCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
             categoryStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getTotalCostCategory")) {
-            totalCostLabel.setText(Double.toString(chosenCategory.getTotalCost()));
+            totalCostLabel.setText(Double.toString(round(chosenCategory.getTotalCost(), 2)));
             totalCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
             categoryStats.updateUI();
         }
     }
 
+    public void productStatsHelperHelper() {
+        productStats = new JPanel();
+        dayCostInputProduct = new JTextField(10);
+        monthCostInputProduct = new JTextField(10);
+        yearCostInputProduct = new JTextField(10);
+        dayCostLabelProduct = new JLabel();
+        monthCostLabelProduct = new JLabel();
+        yearCostLabelProduct = new JLabel();
+        totalCostLabelProduct = new JLabel();
+
+        dayAmountInputProduct = new JTextField(10);
+        monthAmountInputProduct = new JTextField(10);
+        yearAmountInputProduct = new JTextField(10);
+        dayAmountLabelProduct = new JLabel();
+        monthAmountLabelProduct = new JLabel();
+        yearAmountLabelProduct = new JLabel();
+        totalAmountLabelProduct = new JLabel();
+    }
+
+    public void productStatsHelper() {
+        productStatsHelperHelper();
+
+        productStats.add(dayCostLabelProduct);
+        productStats.add(dayCostInputProduct);
+        jbuttonCreator("Day Cost", "getDayCostProduct", productStats);
+        productStats.add(monthCostLabelProduct);
+        productStats.add(monthCostInputProduct);
+        jbuttonCreator("Month Cost", "getMonthCostProduct", productStats);
+        productStats.add(yearCostLabelProduct);
+        productStats.add(yearCostInputProduct);
+        jbuttonCreator("Year Cost", "getYearCostProduct", productStats);
+        productStats.add(totalCostLabelProduct);
+        jbuttonCreator("Total Cost", "getTotalCostProduct", productStats);
+
+        productStats.add(dayAmountLabelProduct);
+        productStats.add(dayAmountInputProduct);
+        jbuttonCreator("Day Amount", "getDayAmountProduct", productStats);
+        productStats.add(monthAmountLabelProduct);
+        productStats.add(monthAmountInputProduct);
+        jbuttonCreator("Month Amount", "getMonthAmountProduct", productStats);
+        productStats.add(yearAmountLabelProduct);
+        productStats.add(yearAmountInputProduct);
+        jbuttonCreator("Year Amount", "getYearAmountProduct", productStats);
+        productStats.add(totalAmountLabelProduct);
+        jbuttonCreator("Total Amount", "getTotalAmountProduct", productStats);
+        jbuttonCreator("Main", "main", productStats);
+        mainPanel.add(productStats, "productStats");
+    }
+
     // Actions for inside a product
     public void actionPerformedProduct(ActionEvent e) {
         if (e.getActionCommand().equals("productStats")) {
-            return;
+            productStatsHelper();
+            cl.show(mainPanel, "productStats");
         }
 
         if (e.getActionCommand().equals("createProductAccount")) {
             ProductAccount productAccountToBeAdded =
                     new ProductAccount(Integer.parseInt(productAccountAmountField.getText()),
-                            Double.parseDouble(productAccountCostField.getText()),
-                            productAccountDateField.getText());
+                            Double.parseDouble(productAccountCostField.getText()), productAccountDateField.getText());
             chosenProduct.addProductAccount(productAccountToBeAdded);
             productAccountToBeAddedPanel = productAccountUpdatePanelCreator(productAccountToBeAdded);
-            mainPanel.add(productAccountToBeAddedPanel,
-                    productAccountDateField.getText());
+            mainPanel.add(productAccountToBeAddedPanel, productAccountDateField.getText());
             if (chosenProduct.getProductAccounts().size() > productAccountListModel.size()) {
                 productAccountListModel.add(0, productAccountToBeAdded);
             }
@@ -434,16 +496,66 @@ public class TemplateUI implements ActionListener {
             productListModel.removeElement(value);
         }
 
-        //USED TO BE PART OF CATEGORY MANAGER
-//        if (e.getActionCommand().equals("printProductAccount")) {
-//            System.out.println(chosenProduct.getProductAccounts());
-//            System.out.println(chosenProduct.getProductAccounts().get(0).getAmount());
-//            System.out.println(chosenProduct.getProductAccounts().get(0).getCost());
-//            System.out.println(chosenProduct.getProductAccounts().get(0).getDate());
-//        }
-
         if (e.getActionCommand().equals("backToChooseProduct")) {
             cl.show(mainPanel, chosenCategory.getName());
+        }
+    }
+
+    public void actionPerformedProductStats(ActionEvent e) {
+        if (e.getActionCommand().equals("getDayCostProduct")) {
+            dayCostLabelProduct.setText(Double.toString(
+                    round(chosenProduct.getDayCost(dayCostInputProduct.getText()), 2)));
+            dayCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getMonthCostProduct")) {
+            monthCostLabelProduct.setText(Double.toString(
+                    round(chosenProduct.getMonthCost(monthCostInputProduct.getText()), 2)));
+            monthCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getYearCostProduct")) {
+            yearCostLabelProduct.setText(Double.toString(
+                    round(chosenProduct.getYearCost(yearCostInputProduct.getText()), 2)));
+            yearCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getTotalCostProduct")) {
+            totalCostLabelProduct.setText(Double.toString(round(chosenProduct.getTotalCost(), 2)));
+            totalCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
+        }
+    }
+
+    public void actionPerformedProductStatsAmount(ActionEvent e) {
+        if (e.getActionCommand().equals("getDayAmountProduct")) {
+            dayAmountLabelProduct.setText(
+                    Integer.toString(chosenProduct.getDayAmount(dayAmountInputProduct.getText())));
+            dayAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getMonthAmountProduct")) {
+            monthAmountLabelProduct.setText(
+                    Integer.toString(chosenProduct.getMonthAmount(monthAmountInputProduct.getText())));
+            monthAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getYearAmountProduct")) {
+            yearAmountLabelProduct.setText(
+                    Integer.toString(chosenProduct.getYearAmount(yearAmountInputProduct.getText())));
+            yearAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getTotalAmountProduct")) {
+            totalAmountLabelProduct.setText(Integer.toString(chosenProduct.getTotalAmount()));
+            totalAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            productStats.updateUI();
         }
     }
 
