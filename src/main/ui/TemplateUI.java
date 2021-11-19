@@ -62,6 +62,19 @@ public class TemplateUI implements ActionListener {
     private Product chosenProduct;
     private ProductAccount chosenProductAccount;
 
+    private JPanel categoryStats;
+    private JTextField dayCostInput;
+    private JTextField monthCostInput;
+    private JTextField yearCostInput;
+
+    private JLabel statOutput;
+    private JPanel statWrapper;
+
+    private JLabel dayCostLabel;
+    private JLabel monthCostLabel;
+    private JLabel yearCostLabel;
+    private JLabel totalCostLabel;
+
     // GUI for the category manager
     public TemplateUI() {
         JFrame frame = new JFrame("Finance Tracker");
@@ -200,7 +213,6 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Select", "chooseProduct", buttonJPanel);
         jbuttonCreator("Delete", "deleteProduct", buttonJPanel);
         jbuttonCreator("Save", "save", buttonJPanel);
-        jbuttonCreator("Back", "backToChooseCategory", buttonJPanel);
         jbuttonCreator("main", "main", buttonJPanel);
         return buttonJPanel;
     }
@@ -211,13 +223,10 @@ public class TemplateUI implements ActionListener {
 
         productAccountCostLabel = new JLabel("Cost");
         productAccountCostField = new JTextField(10);
-        productAccountCostLabel.setLabelFor(productAccountCostField);
         productAccountDateLabel = new JLabel("Date (yyyy-MM-dd)");
         productAccountDateField = new JTextField(10);
-        productAccountDateLabel.setLabelFor(productAccountDateField);
         productAccountAmountLabel = new JLabel("Amount");
         productAccountAmountField = new JTextField(10);
-        productAccountAmountLabel.setLabelFor(productAccountAmountField);
         buttonJPanel.add(productAccountCostLabel);
         buttonJPanel.add(productAccountCostField);
         buttonJPanel.add(productAccountDateLabel);
@@ -270,6 +279,7 @@ public class TemplateUI implements ActionListener {
         actionPerformedCategory(e);
         actionPerformedProduct(e);
         actionPerformedProductAccount(e);
+        actionPerformedCategoryStats(e);
         if (e.getActionCommand().equals("main")) {
             cl.show(mainPanel, "menu");
         }
@@ -310,10 +320,36 @@ public class TemplateUI implements ActionListener {
 //        }
     }
 
+    public void categoryStatsHelper() {
+        categoryStats = new JPanel();
+        dayCostInput = new JTextField(10);
+        monthCostInput = new JTextField(10);
+        yearCostInput = new JTextField(10);
+        dayCostLabel = new JLabel();
+        monthCostLabel = new JLabel();
+        yearCostLabel = new JLabel();
+        totalCostLabel = new JLabel();
+
+        categoryStats.add(dayCostLabel);
+        categoryStats.add(dayCostInput);
+        jbuttonCreator("Day Cost", "getDayCostCategory", categoryStats);
+        categoryStats.add(monthCostLabel);
+        categoryStats.add(monthCostInput);
+        jbuttonCreator("Month Cost", "getMonthCostCategory", categoryStats);
+        categoryStats.add(yearCostLabel);
+        categoryStats.add(yearCostInput);
+        jbuttonCreator("Year Cost", "getYearCostCategory", categoryStats);
+        categoryStats.add(totalCostLabel);
+        jbuttonCreator("Total Cost", "getTotalCostCategory", categoryStats);
+        jbuttonCreator("Main", "main", categoryStats);
+    }
+
     // Actions for inside a category
     public void actionPerformedCategory(ActionEvent e) {
         if (e.getActionCommand().equals("categoryStats")) {
-            return;
+            categoryStatsHelper();
+            mainPanel.add(categoryStats, "categoryStats");
+            cl.show(mainPanel, "categoryStats");
         }
 
         if (e.getActionCommand().equals("createProduct")) {
@@ -337,9 +373,31 @@ public class TemplateUI implements ActionListener {
             chosenCategory.removeProduct(value);
             productListModel.removeElement(value);
         }
+    }
 
-        if (e.getActionCommand().equals("backToChooseCategory")) {
-            cl.show(mainPanel, "menu");
+    public void actionPerformedCategoryStats(ActionEvent e) {
+        if (e.getActionCommand().equals("getDayCostCategory")) {
+            dayCostLabel.setText(Double.toString(chosenCategory.getDayCost(dayCostInput.getText())));
+            dayCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            categoryStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getMonthCostCategory")) {
+            monthCostLabel.setText(Double.toString(chosenCategory.getMonthCost(monthCostInput.getText())));
+            monthCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            categoryStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getYearCostCategory")) {
+            yearCostLabel.setText(Double.toString(chosenCategory.getYearCost(yearCostInput.getText()));
+            yearCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            categoryStats.updateUI();
+        }
+
+        if (e.getActionCommand().equals("getTotalCostCategory")) {
+            totalCostLabel.setText(Double.toString(chosenCategory.getTotalCost()));
+            totalCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            categoryStats.updateUI();
         }
     }
 
@@ -377,12 +435,12 @@ public class TemplateUI implements ActionListener {
         }
 
         //USED TO BE PART OF CATEGORY MANAGER
-        if (e.getActionCommand().equals("printProductAccount")) {
-            System.out.println(chosenProduct.getProductAccounts());
-            System.out.println(chosenProduct.getProductAccounts().get(0).getAmount());
-            System.out.println(chosenProduct.getProductAccounts().get(0).getCost());
-            System.out.println(chosenProduct.getProductAccounts().get(0).getDate());
-        }
+//        if (e.getActionCommand().equals("printProductAccount")) {
+//            System.out.println(chosenProduct.getProductAccounts());
+//            System.out.println(chosenProduct.getProductAccounts().get(0).getAmount());
+//            System.out.println(chosenProduct.getProductAccounts().get(0).getCost());
+//            System.out.println(chosenProduct.getProductAccounts().get(0).getDate());
+//        }
 
         if (e.getActionCommand().equals("backToChooseProduct")) {
             cl.show(mainPanel, chosenCategory.getName());
