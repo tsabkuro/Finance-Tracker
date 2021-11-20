@@ -82,14 +82,16 @@ public class GUI implements ActionListener {
 
     private Category categoryToBeAdded;
 
+    private JFrame frame;
+
     // Initializes everything
-    public GUI() {
-        JFrame frame = new JFrame("Finance Tracker");
+    public GUI(CategoryManager categoryManager) {
+        frame = new JFrame("Finance Tracker");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         ((JPanel) frame.getContentPane()).setBorder(new EmptyBorder(50, 50, 50, 50));
         frame.setLayout(new FlowLayout());
-        categoryManager = new CategoryManager("Main");
+        this.categoryManager = categoryManager;
 
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
@@ -651,6 +653,8 @@ public class GUI implements ActionListener {
         try {
             categoryManager = jsonReader.readCM();
             System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
+            this.frame.dispose();
+            new GUI(categoryManager);
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_STORE);
         }
