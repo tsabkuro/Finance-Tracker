@@ -1,10 +1,5 @@
 package ui;
 
-
-// https://stackoverflow.com/questions/11093326/restricting-jtextfield-input-to-integers
-// https://stackoverflow.com/questions/1313390/is-there-any-way-to-accept-only-numeric-values-in-a-jtextfield
-// https://stackoverflow.com/questions/25769024/handling-date-format-in-jspinner-with-spindatemodel THIS THE FIRST ONE
-
 import model.CategoryManager;
 import model.Category;
 import model.Product;
@@ -22,7 +17,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class TemplateUI implements ActionListener {
+// GUI for the Finance Tracker Application
+public class GUI implements ActionListener {
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
     private static final String JSON_STORE = "./data/categoryManager.json";
@@ -42,26 +38,16 @@ public class TemplateUI implements ActionListener {
     private JScrollPane categoryListJScrollPane;
     private JList categoryJList;
     private JTextField createCategoryJTextField;
-    private DefaultListModel categoryListModel;
 
     private JScrollPane productListJScrollPane;
-    private JList productJList;
-    private JTextField createProductJTextField;
 
     private JScrollPane productAccountListJScrollPane;
-    private JList productAccountJList;
+
     private JLabel productAccountCostLabel;
-    private JTextField productAccountCostField;
     private JLabel productAccountDateLabel;
-    private JTextField productAccountDateField;
     private JLabel productAccountAmountLabel;
-    private JTextField productAccountAmountField;
 
     private JPanel productAccountToBeAddedPanel;
-
-    private JTextField productAccountUpdateCostField;
-    private JTextField productAccountUpdateDateField;
-    private JTextField productAccountUpdateAmountField;
 
     private Category chosenCategory;
     private Product chosenProduct;
@@ -80,10 +66,6 @@ public class TemplateUI implements ActionListener {
     private JTextField monthAmountInputProduct;
     private JTextField yearAmountInputProduct;
 
-
-    private JLabel statOutput;
-    private JPanel statWrapper;
-
     private JLabel dayCostLabel;
     private JLabel monthCostLabel;
     private JLabel yearCostLabel;
@@ -100,14 +82,17 @@ public class TemplateUI implements ActionListener {
 
     private Category categoryToBeAdded;
 
-    // GUI for the category manager
-    public TemplateUI() {
+    // Initializes everything
+    public GUI() {
         JFrame frame = new JFrame("Finance Tracker");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         ((JPanel) frame.getContentPane()).setBorder(new EmptyBorder(50, 50, 50, 50));
         frame.setLayout(new FlowLayout());
         categoryManager = new CategoryManager("Main");
+
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
 
         mainPanel = new JPanel(new CardLayout());
 
@@ -120,7 +105,6 @@ public class TemplateUI implements ActionListener {
         categoryPanel.add(categoryManagerButtonMenu());
 
         mainPanel.add(categoryPanel, "menu");
-//        mainPanel.add(productPanelCreator(new Category("test")), "test");
         cl.show(mainPanel, "menu");
 
         frame.add(mainPanel, BorderLayout.CENTER);
@@ -130,68 +114,71 @@ public class TemplateUI implements ActionListener {
         frame.setVisible(true);
     }
 
-    // Panel for inside a category
+    // MODIFIES: this
+    // EFFECTS: creates JPanel for the product list and buttons inside category
     public Component productPanelCreator(Category category) {
         productPanel = new JPanel();
         productPanel.setLayout(new GridLayout(2, 1));
         productPanel.add(productListMenu(category));
-        productPanel.add(categoryButtonMenu());
+        productPanel.add(categoryButtonMenu(category));
         return productPanel;
     }
 
-    // Panel for inside a product
+    // MODIFIES: this
+    // EFFECTS: creates JPanel for the product accounts list and buttons inside product
     public Component productAccountPanelCreator(Product product) {
         productAccountPanel = new JPanel();
         productAccountPanel.setLayout(new GridLayout(2, 1));
         productAccountPanel.add(productAccountListMenu(product));
-        productAccountPanel.add(productButtonMenu());
+        productAccountPanel.add(productButtonMenu(product));
         return productAccountPanel;
     }
 
-    // Panel for inside a product account to update
+    // MODIFIES: this
+    // EFFECTS: creates JPanel with buttons to update product account
     public JPanel productAccountUpdatePanelCreator(ProductAccount productAccount) {
         productAccountUpdatePanel = new JPanel();
         productAccountUpdatePanel.setLayout(new GridLayout(2, 1));
-        productAccountUpdatePanel.add(productAccountButtonMenu());
+        productAccountUpdatePanel.add(productAccountButtonMenu(productAccount));
         return productAccountUpdatePanel;
     }
 
-    // CATEGORY LIST MENU
+    // MODIFIES: this
+    // EFFECTS: lists categories inside category manager
     private JScrollPane categoryListMenu() {
-        categoryListModel = new DefaultListModel<Category>();
         for (Category val : categoryManager.getCategories()) {
-            categoryListModel.addElement(val);
+            categoryManager.getCategoryListModel().addElement(val);
         }
 
-        categoryJList = new JList(categoryListModel);
+        categoryJList = new JList(categoryManager.getCategoryListModel());
         categoryListJScrollPane = new JScrollPane(categoryJList);
         return listMenuHelper(categoryListJScrollPane);
     }
 
-    // PRODUCT LIST MENU
+    // MODIFIES: this
+    // EFFECTS: lists products inside category
     private JScrollPane productListMenu(Category category) {
         for (Product val : category.getProductList()) {
             category.getProductListModel().addElement(val);
         }
 
-        productJList = new JList(category.getProductListModel());
-        productListJScrollPane = new JScrollPane(productJList);
+        productListJScrollPane = new JScrollPane(category.getProductJList());
 
         return listMenuHelper(productListJScrollPane);
     }
 
-    // PRODUCT ACCOUNT LIST MENU
+    // MODIFIES: this
+    // EFFECTS: lists product accounts inside product
     private JScrollPane productAccountListMenu(Product product) {
         for (ProductAccount val : product.getProductAccounts()) {
             product.getProductAccountListModel().addElement(val);
         }
 
-        productAccountJList = new JList(product.getProductAccountListModel());
-        productAccountListJScrollPane = new JScrollPane(productAccountJList);
+        productAccountListJScrollPane = new JScrollPane(product.getProductAccountJList());
         return listMenuHelper(productAccountListJScrollPane);
     }
 
-    //list menu helper
+    // EFFECTS: helper to create JScrollPane for the list menus
     public JScrollPane listMenuHelper(JScrollPane pane) {
         pane.setPreferredSize(new Dimension(800, 400));
 
@@ -203,7 +190,10 @@ public class TemplateUI implements ActionListener {
         return pane;
     }
 
-    // BUTTON MENU FOR CATEGORIES
+
+    // REQUIRES: category name to be unique
+    // MODIFIES: this
+    // EFFECTS: creates panel that contains buttons for categories
     private JPanel categoryManagerButtonMenu() {
         buttonJPanel = new JPanel();
         createCategoryJTextField = new JTextField(10);
@@ -216,69 +206,58 @@ public class TemplateUI implements ActionListener {
         return buttonJPanel;
     }
 
-    // BUTTON MENU FOR PRODUCTS
-    private JPanel categoryButtonMenu() {
-        buttonJPanel = new JPanel();
-        createProductJTextField = new JTextField(10);
-        buttonJPanel.add(createProductJTextField);
-        jbuttonCreator("Stats", "categoryStats", buttonJPanel);
-        jbuttonCreator("Create", "createProduct", buttonJPanel);
-        jbuttonCreator("Select", "chooseProduct", buttonJPanel);
-        jbuttonCreator("Delete", "deleteProduct", buttonJPanel);
-        jbuttonCreator("Print", "printProduct", buttonJPanel);
-        jbuttonCreator("Save", "save", buttonJPanel);
-        jbuttonCreator("main", "main", buttonJPanel);
-        return buttonJPanel;
+    // EFFECTS: creates panel that contains buttons for products
+    private JPanel categoryButtonMenu(Category category) {
+        category.getButtonPanel().add(category.getCreateProductJTextField());
+        jbuttonCreator("Stats", "categoryStats", category.getButtonPanel());
+        jbuttonCreator("Create", "createProduct", category.getButtonPanel());
+        jbuttonCreator("Select", "chooseProduct", category.getButtonPanel());
+        jbuttonCreator("Delete", "deleteProduct", category.getButtonPanel());
+        jbuttonCreator("Save", "save", category.getButtonPanel());
+        jbuttonCreator("main", "main", category.getButtonPanel());
+        return category.getButtonPanel();
     }
 
-    // BUTTON MENU FOR PRODUCT ACCOUNTS
-    private JPanel productButtonMenu() {
-        buttonJPanel = new JPanel();
-
+    // MODIFIES: this
+    // EFFECTS: creates panel that contains buttons for product accounts
+    private JPanel productButtonMenu(Product product) {
         productAccountCostLabel = new JLabel("Cost");
-        productAccountCostField = new JTextField(10);
         productAccountDateLabel = new JLabel("Date (yyyy-MM-dd)");
-        productAccountDateField = new JTextField(10);
         productAccountAmountLabel = new JLabel("Amount");
-        productAccountAmountField = new JTextField(10);
-        buttonJPanel.add(productAccountCostLabel);
-        buttonJPanel.add(productAccountCostField);
-        buttonJPanel.add(productAccountDateLabel);
-        buttonJPanel.add(productAccountDateField);
-        buttonJPanel.add(productAccountAmountLabel);
-        buttonJPanel.add(productAccountAmountField);
-        jbuttonCreator("Stats", "productStats", buttonJPanel);
-        jbuttonCreator("Create", "createProductAccount", buttonJPanel);
-        jbuttonCreator("Update", "chooseProductAccount", buttonJPanel);
-        jbuttonCreator("Delete", "deleteProductAccount", buttonJPanel);
-        jbuttonCreator("Print", "printProductAccount", buttonJPanel);
-        jbuttonCreator("Save", "save", buttonJPanel);
-        jbuttonCreator("back", "backToChooseProduct", buttonJPanel);
-        jbuttonCreator("main", "main", buttonJPanel);
-        return buttonJPanel;
+
+        product.getButtonPanel().add(productAccountCostLabel);
+        product.getButtonPanel().add(product.getProductAccountCostField());
+        product.getButtonPanel().add(productAccountDateLabel);
+        product.getButtonPanel().add(product.getProductAccountDateField());
+        product.getButtonPanel().add(productAccountAmountLabel);
+        product.getButtonPanel().add(product.getProductAccountAmountField());
+        jbuttonCreator("Stats", "productStats", product.getButtonPanel());
+        jbuttonCreator("Create", "createProductAccount", product.getButtonPanel());
+        jbuttonCreator("Update", "chooseProductAccount", product.getButtonPanel());
+        jbuttonCreator("Delete", "deleteProductAccount", product.getButtonPanel());
+        jbuttonCreator("Save", "save", product.getButtonPanel());
+        jbuttonCreator("back", "backToChooseProduct", product.getButtonPanel());
+        jbuttonCreator("main", "main", product.getButtonPanel());
+        return product.getButtonPanel();
     }
 
 
-    // BUTTON MENU FOR PRODUCT ACCOUNT UPDATE
-    private JPanel productAccountButtonMenu() {
-        buttonJPanel = new JPanel();
-        productAccountUpdateCostField = new JTextField(10);
-        productAccountUpdateDateField = new JTextField(10);
-        productAccountUpdateAmountField = new JTextField(10);
-        buttonJPanel.add(productAccountUpdateCostField);
-        jbuttonCreator("Update Cost", "updateCost", buttonJPanel);
-        buttonJPanel.add(productAccountUpdateDateField);
-        jbuttonCreator("Update Date", "updateDate", buttonJPanel);
-        buttonJPanel.add(productAccountUpdateAmountField);
-        jbuttonCreator("Add Amount", "addAmount", buttonJPanel);
-        jbuttonCreator("Remove Amount", "removeAmount", buttonJPanel);
-        jbuttonCreator("Save", "save", buttonJPanel);
-        jbuttonCreator("back", "backToChooseProductAccount", buttonJPanel);
-        jbuttonCreator("main", "main", buttonJPanel);
-        return buttonJPanel;
+    // EFFECTS: creates panel that contains buttons to update product account
+    private JPanel productAccountButtonMenu(ProductAccount productAccount) {
+        productAccount.getButtonPanel().add(productAccount.getProductAccountUpdateCostField());
+        jbuttonCreator("Update Cost", "updateCost", productAccount.getButtonPanel());
+        productAccount.getButtonPanel().add(productAccount.getProductAccountUpdateDateField());
+        jbuttonCreator("Update Date", "updateDate", productAccount.getButtonPanel());
+        productAccount.getButtonPanel().add(productAccount.getProductAccountUpdateAmountField());
+        jbuttonCreator("Add Amount", "addAmount", productAccount.getButtonPanel());
+        jbuttonCreator("Remove Amount", "removeAmount", productAccount.getButtonPanel());
+        jbuttonCreator("Save", "save", productAccount.getButtonPanel());
+        jbuttonCreator("back", "backToChooseProductAccount", productAccount.getButtonPanel());
+        jbuttonCreator("main", "main", productAccount.getButtonPanel());
+        return productAccount.getButtonPanel();
     }
 
-    //  JBUTTON HELPER
+    // EFFECTS: helper to create JButtons and add to JPanel
     private JButton jbuttonCreator(String name, String actionCommand, JPanel panel) {
         JButton createdJButton = new JButton(name);
         createdJButton.setActionCommand(actionCommand);
@@ -287,7 +266,7 @@ public class TemplateUI implements ActionListener {
         return createdJButton;
     }
 
-    //    This is the method that is called when the the JButton btn is clicked
+    // EFFECTS: listens to action event and shows specified panels tied to the action event
     public void actionPerformed(ActionEvent e) {
         actionPerformedCategoryManager(e);
         actionPerformedCategory(e);
@@ -300,8 +279,11 @@ public class TemplateUI implements ActionListener {
             cl.show(mainPanel, "menu");
         }
 
-        if (e.getActionCommand().equals("load")) {
+        if (e.getActionCommand().equals("loadCategory")) {
             loadCategoryManager();
+            mainPanel.revalidate();
+            mainPanel.repaint();
+            mainPanel.updateUI();
         }
 
         if (e.getActionCommand().equals("save")) {
@@ -309,14 +291,15 @@ public class TemplateUI implements ActionListener {
         }
     }
 
-    // Actions for inside a category manager
+    // MODIFIES: this
+    // EFFECTS: actions for inside category manager
     public void actionPerformedCategoryManager(ActionEvent e) {
         if (e.getActionCommand().equals("createCategory")) {
             categoryToBeAdded = new Category(createCategoryJTextField.getText());
             categoryManager.addCategory(categoryToBeAdded);
             mainPanel.add(productPanelCreator(categoryToBeAdded), categoryToBeAdded.getName());
-            if (categoryManager.getCategories().size() > categoryListModel.size()) {
-                categoryListModel.add(0, categoryToBeAdded);
+            if (categoryManager.getCategories().size() > categoryManager.getCategoryListModel().size()) {
+                categoryManager.getCategoryListModel().add(0, categoryToBeAdded);
             }
         }
 
@@ -331,10 +314,13 @@ public class TemplateUI implements ActionListener {
         if (e.getActionCommand().equals("deleteCategory")) {
             Category value = (Category) categoryJList.getSelectedValue();
             categoryManager.removeCategory(value);
-            categoryListModel.removeElement(value);
+            categoryManager.getCategoryListModel().removeElement(value);
         }
     }
 
+    // REQUIRES: dates to be in form yyyy-MM-dd
+    // MODIFIES: this
+    // EFFECTS: creates menu for category stats panel
     public void categoryStatsHelper() {
         categoryStats = new JPanel();
         dayCostInput = new JTextField(10);
@@ -360,7 +346,24 @@ public class TemplateUI implements ActionListener {
         mainPanel.add(categoryStats, "categoryStats");
     }
 
-    // Actions for inside a category
+    // MODIFIES: this
+    // EFFECTS: helper that listens to actions for inside category
+    public void actionPerformedCategoryHelper(ActionEvent e) {
+        if (e.getActionCommand().equals("chooseProduct")) {
+            chosenProduct = (Product) chosenCategory.getProductJList().getSelectedValue();
+            if (!(chosenProduct == null)) {
+                cl.show(mainPanel, chosenProduct.getName());
+            }
+        }
+
+        if (e.getActionCommand().equals("deleteProduct")) {
+            Product value = (Product) chosenCategory.getProductJList().getSelectedValue();
+            chosenCategory.removeProduct(value);
+            chosenCategory.getProductListModel().removeElement(value);
+        }
+    }
+
+    // EFFECTS: actions for inside category
     public void actionPerformedCategory(ActionEvent e) {
         if (e.getActionCommand().equals("categoryStats")) {
             categoryStatsHelper();
@@ -368,28 +371,19 @@ public class TemplateUI implements ActionListener {
         }
 
         if (e.getActionCommand().equals("createProduct")) {
-            Product productToBeAdded = new Product(createProductJTextField.getText());
+            Product productToBeAdded = new Product(chosenCategory.getCreateProductJTextField().getText());
             chosenCategory.addProduct(productToBeAdded);
-            mainPanel.add(productAccountPanelCreator(productToBeAdded), createProductJTextField.getText());
+            mainPanel.add(productAccountPanelCreator(productToBeAdded),
+                    chosenCategory.getCreateProductJTextField().getText());
             if (chosenCategory.getProductList().size() > chosenCategory.getProductListModel().size()) {
                 chosenCategory.getProductListModel().add(0, productToBeAdded);
             }
         }
 
-        if (e.getActionCommand().equals("chooseProduct")) {
-            chosenProduct = (Product) productJList.getSelectedValue();
-            if (!(chosenProduct == null)) {
-                cl.show(mainPanel, chosenProduct.getName());
-            }
-        }
-
-        if (e.getActionCommand().equals("deleteProduct")) {
-            Product value = (Product) productJList.getSelectedValue();
-            chosenCategory.removeProduct(value);
-            chosenCategory.getProductListModel().removeElement(value);
-        }
+        actionPerformedCategoryHelper(e);
     }
 
+    // EFFECTS: rounds double to specified number of places
     public static double round(double value, int places) {
         if (places < 0) {
             throw new IllegalArgumentException();
@@ -400,6 +394,8 @@ public class TemplateUI implements ActionListener {
         return bd.doubleValue();
     }
 
+    // MODIFIES: this
+    // EFFECTS: actions for inside category stats
     public void actionPerformedCategoryStats(ActionEvent e) {
         if (e.getActionCommand().equals("getDayCostCategory")) {
             dayCostLabel.setText(Double.toString(round(chosenCategory.getDayCost(dayCostInput.getText()), 2)));
@@ -426,7 +422,10 @@ public class TemplateUI implements ActionListener {
         }
     }
 
-    public void productStatsHelperHelper() {
+    // REQUIRES: dates to be in format yyyy-MM-dd
+    // MODIFIES: this
+    // EFFECTS: assigns variables for product stats
+    public void productStatsVariableAssigner() {
         productStats = new JPanel();
         dayCostInputProduct = new JTextField(10);
         monthCostInputProduct = new JTextField(10);
@@ -445,7 +444,9 @@ public class TemplateUI implements ActionListener {
         totalAmountLabelProduct = new JLabel();
     }
 
-    public void productStatsHelperHelper2() {
+    // MODIFIES: this
+    // EFFECTS: hlper for creating menu for product stats
+    public void productStatsMenuCreator1() {
         productStats.add(dayCostLabelProduct);
         productStats.add(dayCostInputProduct);
         jbuttonCreator("Day Cost", "getDayCostProduct", productStats);
@@ -459,7 +460,9 @@ public class TemplateUI implements ActionListener {
         jbuttonCreator("Total Cost", "getTotalCostProduct", productStats);
     }
 
-    public void productStatsHelperHelper3() {
+    // MODIFIES: this
+    // EFFECTS: helper for creating menu for product stats
+    public void productStatsMenuCreator2() {
         productStats.add(dayAmountLabelProduct);
         productStats.add(dayAmountInputProduct);
         jbuttonCreator("Day Amount", "getDayAmountProduct", productStats);
@@ -475,27 +478,33 @@ public class TemplateUI implements ActionListener {
         mainPanel.add(productStats, "productStats");
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates menu for product stats
     public void productStatsHelper() {
-        productStatsHelperHelper();
-        productStatsHelperHelper2();
-        productStatsHelperHelper3();
+        productStatsVariableAssigner();
+        productStatsMenuCreator1();
+        productStatsMenuCreator2();
     }
 
+    // MODIFIES: this
+    // EFFECTS: helper for actions for inside product. Creates product account
     public void actionPerformedProductHelper(ActionEvent e) {
         if (e.getActionCommand().equals("createProductAccount")) {
             ProductAccount productAccountToBeAdded =
-                    new ProductAccount(Integer.parseInt(productAccountAmountField.getText()),
-                            Double.parseDouble(productAccountCostField.getText()), productAccountDateField.getText());
+                    new ProductAccount(Integer.parseInt(chosenProduct.getProductAccountAmountField().getText()),
+                            Double.parseDouble(chosenProduct.getProductAccountCostField().getText()),
+                            chosenProduct.getProductAccountDateField().getText());
             chosenProduct.addProductAccount(productAccountToBeAdded);
             productAccountToBeAddedPanel = productAccountUpdatePanelCreator(productAccountToBeAdded);
-            mainPanel.add(productAccountToBeAddedPanel, productAccountDateField.getText());
+            mainPanel.add(productAccountToBeAddedPanel, chosenProduct.getProductAccountDateField().getText());
             if (chosenProduct.getProductAccounts().size() > chosenProduct.getProductAccountListModel().size()) {
                 chosenProduct.getProductAccountListModel().add(0, productAccountToBeAdded);
             }
         }
     }
 
-    // Actions for inside a product
+    // MODIFIES: this
+    // EFFECTS: actions for inside product
     public void actionPerformedProduct(ActionEvent e) {
         if (e.getActionCommand().equals("productStats")) {
             productStatsHelper();
@@ -505,18 +514,16 @@ public class TemplateUI implements ActionListener {
         actionPerformedProductHelper(e);
 
         if (e.getActionCommand().equals("chooseProductAccount")) {
-            chosenProductAccount = (ProductAccount) productAccountJList.getSelectedValue();
+            chosenProductAccount = (ProductAccount) chosenProduct.getProductAccountJList().getSelectedValue();
             if (!(chosenProductAccount == null)) {
                 cl.show(mainPanel, chosenProductAccount.getDate());
             }
         }
 
-        // this needs to change
         if (e.getActionCommand().equals("deleteProductAccount")) {
-            ProductAccount value = (ProductAccount) productAccountJList.getSelectedValue();
+            ProductAccount value = (ProductAccount) chosenProduct.getProductAccountJList().getSelectedValue();
             chosenProduct.removeProductAccount(value);
-            //this part in particular
-            chosenCategory.getProductListModel().removeElement(value);
+            chosenProduct.getProductAccountListModel().removeElement(value);
         }
 
         if (e.getActionCommand().equals("backToChooseProduct")) {
@@ -524,6 +531,8 @@ public class TemplateUI implements ActionListener {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: actions for inside product stats
     public void actionPerformedProductStats(ActionEvent e) {
         if (e.getActionCommand().equals("getDayCostProduct")) {
             dayCostLabelProduct.setText(Double.toString(
@@ -553,6 +562,8 @@ public class TemplateUI implements ActionListener {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: actions for inside product stat amount
     public void actionPerformedProductStatsAmount(ActionEvent e) {
         if (e.getActionCommand().equals("getDayAmountProduct")) {
             dayAmountLabelProduct.setText(
@@ -582,30 +593,40 @@ public class TemplateUI implements ActionListener {
         }
     }
 
-    // Actions for inside a product account
+    // MODIFIES: this
+    // EFFECTS: helper for actions for inside product stat amount
+    public void actionPerformedProductAccountHelper(ActionEvent e) {
+        if (e.getActionCommand().equals("addAmount")) {
+            chosenProductAccount.addAmount(Integer.parseInt(
+                    chosenProduct.getProductAccountAmountField().getText()));
+            cl.show(mainPanel, chosenProduct.getName());
+        }
+
+        if (e.getActionCommand().equals("removeAmount")) {
+            chosenProductAccount.removeAmount(Integer.parseInt(
+                    chosenProduct.getProductAccountAmountField().getText()));
+            cl.show(mainPanel, chosenProduct.getName());
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: actions for inside product account
     public void actionPerformedProductAccount(ActionEvent e) {
         if (e.getActionCommand().equals("updateCost")) {
-            chosenProductAccount.setCost(Double.parseDouble(productAccountUpdateCostField.getText()));
+            chosenProductAccount.setCost(
+                    Double.parseDouble(chosenProductAccount.getProductAccountUpdateCostField().getText()));
             cl.show(mainPanel, chosenProduct.getName());
         }
 
         if (e.getActionCommand().equals("updateDate")) {
             mainPanel.remove(productAccountToBeAddedPanel);
-            chosenProductAccount.setDate(productAccountUpdateDateField.getText());
+            chosenProductAccount.setDate(chosenProductAccount.getProductAccountUpdateDateField().getText());
             productAccountToBeAddedPanel = productAccountUpdatePanelCreator(chosenProductAccount);
             mainPanel.add(productAccountToBeAddedPanel, chosenProductAccount.getDate());
             cl.show(mainPanel, chosenProduct.getName());
         }
 
-        if (e.getActionCommand().equals("addAmount")) {
-            chosenProductAccount.addAmount(Integer.parseInt(productAccountUpdateAmountField.getText()));
-            cl.show(mainPanel, chosenProduct.getName());
-        }
-
-        if (e.getActionCommand().equals("removeAmount")) {
-            chosenProductAccount.removeAmount(Integer.parseInt(productAccountUpdateAmountField.getText()));
-            cl.show(mainPanel, chosenProduct.getName());
-        }
+        actionPerformedProductAccountHelper(e);
 
         if (e.getActionCommand().equals("backToChooseProductAccount")) {
             cl.show(mainPanel, chosenProduct.getName());
@@ -633,9 +654,5 @@ public class TemplateUI implements ActionListener {
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_STORE);
         }
-    }
-
-    public static void main(String[] args) {
-        new TemplateUI();
     }
 }

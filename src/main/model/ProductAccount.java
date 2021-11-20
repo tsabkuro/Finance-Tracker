@@ -3,11 +3,17 @@ package model;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import javax.swing.*;
+
 // Represents a product account having a cost, amount, and date bought
 public class ProductAccount implements Writable {
     private double cost;                    // the product cost (in dollars)
     private String date;                    // date the product was bought
     private int amount;                     // amount of product bought
+    private JPanel buttonPanel;             // JPanel for buttons and text fields
+    private JTextField productAccountUpdateCostField;
+    private JTextField productAccountUpdateDateField;
+    private JTextField productAccountUpdateAmountField;
 
     /*
      * REQUIRES: productName has a non-zero length
@@ -20,6 +26,26 @@ public class ProductAccount implements Writable {
         amount = productAmount;
         cost = productCost;
         date = productDate;
+        buttonPanel = new JPanel();
+        productAccountUpdateCostField = new JTextField(10);
+        productAccountUpdateDateField = new JTextField(10);
+        productAccountUpdateAmountField = new JTextField(10);
+    }
+
+    public JTextField getProductAccountUpdateAmountField() {
+        return productAccountUpdateAmountField;
+    }
+
+    public JTextField getProductAccountUpdateCostField() {
+        return productAccountUpdateCostField;
+    }
+
+    public JTextField getProductAccountUpdateDateField() {
+        return productAccountUpdateDateField;
+    }
+
+    public JPanel getButtonPanel() {
+        return buttonPanel;
     }
 
     public int getAmount() {

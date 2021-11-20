@@ -12,17 +12,53 @@ public class Product implements Writable {
     private String name;        // the product name
     private ArrayList<ProductAccount> productAccounts; // list of product accounts
     private DefaultListModel productAccountListModel; // model for list of product account
+    private JPanel buttonPanel;                       // JPanel for buttons and text fields
+    private JTextField productAccountCostField;       // cost input
+    private JTextField productAccountDateField;       // date input
+    private JTextField productAccountAmountField;     // amount input
+    private JList productAccountJList;                // JList of product accounts
+
 
     /*
      * REQUIRES: productName has a non-zero length and is unique
      * EFFECTS: name on product set to productName
      *          productAccounts is ArrayList of type ProductAccount
      *          productAccountListModel is DefaultListModel of type ProductAccount
+     *          buttonPanel is new JPanel
+     *          productAccountCostField is a new JTextField with 10 columns
+     *          productAccountDateField is a new JTextField with 10 columns
+     *          productAccountAmountField is a new JTextField with 10 columns
+     *          productAccountJList is a new JList that contains productAccountListModel
      */
     public Product(String productName) {
         name = productName;
         productAccounts = new ArrayList<ProductAccount>();
         productAccountListModel = new DefaultListModel();
+        buttonPanel = new JPanel();
+        productAccountCostField = new JTextField(10);
+        productAccountDateField = new JTextField(10);
+        productAccountAmountField = new JTextField(10);
+        productAccountJList = new JList(productAccountListModel);
+    }
+
+    public JList getProductAccountJList() {
+        return productAccountJList;
+    }
+
+    public JPanel getButtonPanel() {
+        return buttonPanel;
+    }
+
+    public JTextField getProductAccountCostField() {
+        return productAccountCostField;
+    }
+
+    public JTextField getProductAccountAmountField() {
+        return productAccountAmountField;
+    }
+
+    public JTextField getProductAccountDateField() {
+        return productAccountDateField;
     }
 
     public String getName() {

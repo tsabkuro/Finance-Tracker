@@ -4,17 +4,24 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 // Represents category manager having a list of categories
 public class CategoryManager implements Writable {
     private String name;
     private ArrayList<Category> categories; // list of categories
+    private DefaultListModel categoryListModel;
 
     // EFFECTS: constructs workroom with a name and empty list of thingies
     public CategoryManager(String name) {
         this.name = name;
         categories = new ArrayList<>();
+        categoryListModel = new DefaultListModel();
+    }
+
+    public DefaultListModel getCategoryListModel() {
+        return categoryListModel;
     }
 
     /*

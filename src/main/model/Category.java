@@ -14,6 +14,9 @@ public class Category implements Writable {
     private String name;                   // category name
     private ArrayList<Product> productList; // list of products
     private DefaultListModel productListModel; // model for list of products
+    private JList productJList;                // JList of products
+    private JPanel buttonPanel;                 // JPanel for buttons and text fields
+    private JTextField createProductJTextField; // JTextField for naming products inside category
 
     /*
      * REQUIRES: categoryName has a non-zero length and is unique
@@ -21,12 +24,30 @@ public class Category implements Writable {
      *          id on category is a positive integer and unique
      *          productList is ArrayList of type Product
      *          productListModel is DefaultListModel of type Product
+     *          buttonPanel is new JPanel
+     *          createProductJTextField is new JTextField with 10 columns
+     *          productJList is new JList that contains productListModel
      */
     public Category(String categoryName) {
         id = nextCategoryId++;
         name = categoryName;
         productList = new ArrayList<Product>();
         productListModel = new DefaultListModel();
+        buttonPanel = new JPanel();
+        createProductJTextField = new JTextField(10);
+        productJList = new JList(productListModel);
+    }
+
+    public JList getProductJList() {
+        return productJList;
+    }
+
+    public JTextField getCreateProductJTextField() {
+        return createProductJTextField;
+    }
+
+    public JPanel getButtonPanel() {
+        return buttonPanel;
     }
 
     public int getId() {
