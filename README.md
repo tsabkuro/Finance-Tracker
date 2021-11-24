@@ -20,3 +20,21 @@ important. Managing your money is a great way to know where to cut costs and ach
 
 - As a user, I want to be able to save the state of all product accounts, products, and categories to file
 - As a user, I want to be able to load my finance tracker from file
+
+## Phase 4: Task 2
+- Wed Nov 24 14:37:09 PST 2021
+- Food category added
+- Wed Nov 24 14:37:11 PST 2021
+- Appliances category added
+- Wed Nov 24 14:37:14 PST 2021
+- Food category removed
+- Wed Nov 24 14:37:20 PST 2021
+- Fridge product added
+- Wed Nov 24 14:37:28 PST 2021
+- Oven product added
+- Wed Nov 24 14:37:48 PST 2021
+- Added product account - Date: 2002-11-1 Amount: 1 Cost: 19.22
+- Wed Nov 24 14:37:57 PST 2021
+- Cost set to 90.22 of product account - Date: 2002-11-1 Amount: 1Cost: 90.22
+- Wed Nov 24 14:38:01 PST 2021
+- Removed product account - Date: 2002-11-1 Amount: 1 Cost: 90.22

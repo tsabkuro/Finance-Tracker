@@ -76,7 +76,8 @@ public class ProductAccount implements Writable {
      */
     public double setCost(double productCost) {
         cost = productCost;
-        EventLog.getInstance().logEvent(new Event("Cost set to " + productCost));
+        EventLog.getInstance().logEvent(new Event("Cost set to "
+                + productCost + " of product account - Date: " + date + " Amount: " + amount + "Cost: " + cost));
         return cost;
     }
 
@@ -87,7 +88,8 @@ public class ProductAccount implements Writable {
      */
     public String setDate(String productDate) {
         date = productDate;
-        EventLog.getInstance().logEvent(new Event("Date set to " + productDate));
+        EventLog.getInstance().logEvent(new Event("Date set to "
+                + productDate + " of product account - Date: " + date + " Amount: " + amount + "Cost: " + cost));
         return date;
     }
 
@@ -99,7 +101,8 @@ public class ProductAccount implements Writable {
      */
     public int addAmount(int productAmount) {
         amount += productAmount;
-        EventLog.getInstance().logEvent(new Event(productAmount + " amount added"));
+        EventLog.getInstance().logEvent(new Event(productAmount
+                + " amount added of product account - Date: " + date + " Amount: " + amount + "Cost: " + cost));
         return amount;
     }
 
@@ -111,7 +114,8 @@ public class ProductAccount implements Writable {
      */
     public int removeAmount(int productAmount) {
         amount -= productAmount;
-        EventLog.getInstance().logEvent(new Event(productAmount + " amount removed"));
+        EventLog.getInstance().logEvent(new Event(productAmount
+                + " amount removed of product account - Date: " + date + " Amount: " + amount + "Cost: " + cost));
         return amount;
     }
 
