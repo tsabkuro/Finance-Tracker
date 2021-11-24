@@ -75,11 +75,13 @@ public class Category implements Writable {
     public ArrayList<Product> addProduct(Product product) {
         for (Product i: productList) {
             if (i.getName().equals(product.getName())) {
+                EventLog.getInstance().logEvent(new Event(product.getName()
+                        + " product not added: Already Exists"));
                 return productList;
             }
         }
         productList.add(product);
-        EventLog.getInstance().logEvent(new Event(product.getName() + "Product added"));
+        EventLog.getInstance().logEvent(new Event(product.getName() + " product added"));
         return productList;
     }
 
@@ -90,7 +92,7 @@ public class Category implements Writable {
      */
     public ArrayList<Product> removeProduct(Product product) {
         productList.remove(product);
-        EventLog.getInstance().logEvent(new Event(product.getName() + "Product removed"));
+        EventLog.getInstance().logEvent(new Event(product.getName() + " product removed"));
         return productList;
     }
 

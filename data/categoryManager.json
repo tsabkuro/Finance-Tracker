@@ -1,10 +1,13 @@
 {
     "name": "Main",
-    "categories": [{
-        "name": "food",
-        "products": [{
-            "product accounts": [],
-            "name": "apple"
-        }]
-    }]
+    "categories": [
+        {
+            "name": "Whack",
+            "products": []
+        },
+        {
+            "name": "Relly",
+            "products": []
+        }
+    ]
 }

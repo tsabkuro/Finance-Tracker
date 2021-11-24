@@ -99,7 +99,7 @@ public class ProductAccount implements Writable {
      */
     public int addAmount(int productAmount) {
         amount += productAmount;
-        EventLog.getInstance().logEvent(new Event(productAmount + "amount added"));
+        EventLog.getInstance().logEvent(new Event(productAmount + " amount added"));
         return amount;
     }
 
@@ -111,7 +111,7 @@ public class ProductAccount implements Writable {
      */
     public int removeAmount(int productAmount) {
         amount -= productAmount;
-        EventLog.getInstance().logEvent(new Event(productAmount + "amount removed"));
+        EventLog.getInstance().logEvent(new Event(productAmount + " amount removed"));
         return amount;
     }
 

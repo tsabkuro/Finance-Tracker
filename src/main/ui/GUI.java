@@ -1,9 +1,6 @@
 package ui;
 
-import model.CategoryManager;
-import model.Category;
-import model.Product;
-import model.ProductAccount;
+import model.*;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -84,6 +81,8 @@ public class GUI implements ActionListener {
 
     private JFrame frame;
 
+    LogPrinter lp;
+
     // Initializes everything
     public GUI(CategoryManager categoryManager) {
         frame = new JFrame("Finance Tracker");
@@ -93,6 +92,22 @@ public class GUI implements ActionListener {
         frame.setLayout(new FlowLayout());
         this.categoryManager = categoryManager;
 
+        initialise();
+
+        lp = new LogPrinter();
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+
+                lp.printLog(EventLog.getInstance());
+            }
+        });
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates frame and initial panels
+    public void initialise() {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
 

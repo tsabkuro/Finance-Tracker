@@ -47,11 +47,13 @@ public class CategoryManager implements Writable {
     public ArrayList<Category> addCategory(Category category) {
         for (Category i: categories) {
             if (i.getName().equals(category.getName())) {
+                EventLog.getInstance().logEvent(new Event(category.getName()
+                        + " category not added: Already exists"));
                 return categories;
             }
         }
         categories.add(category);
-        EventLog.getInstance().logEvent(new Event(category.getName() + "Added category"));
+        EventLog.getInstance().logEvent(new Event(category.getName() + " added category"));
         return categories;
     }
 
@@ -62,7 +64,7 @@ public class CategoryManager implements Writable {
      */
     public ArrayList<Category> removeCategory(Category category) {
         categories.remove(category);
-        EventLog.getInstance().logEvent(new Event(category.getName() + "Removed category"));
+        EventLog.getInstance().logEvent(new Event(category.getName() + " removed category"));
         return categories;
     }
 

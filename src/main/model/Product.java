@@ -183,7 +183,9 @@ public class Product implements Writable {
      */
     public ArrayList<ProductAccount> addProductAccount(ProductAccount productAccount) {
         productAccounts.add(productAccount);
-        EventLog.getInstance().logEvent(new Event(productAccount.getDate() + "Added product account"));
+        EventLog.getInstance().logEvent(new Event("Added product account - Date: "
+                + productAccount.getDate() + " Amount: " + productAccount.getAmount() + " Cost: "
+                + productAccount.getCost()));
         return productAccounts;
     }
 
@@ -193,7 +195,7 @@ public class Product implements Writable {
      */
     public ArrayList<ProductAccount> removeProductAccount(ProductAccount productAccount) {
         productAccounts.remove(productAccount);
-        EventLog.getInstance().logEvent(new Event(productAccount.getDate() + "Removed product account"));
+        EventLog.getInstance().logEvent(new Event(productAccount.getDate() + " removed product account"));
         return productAccounts;
     }
 
