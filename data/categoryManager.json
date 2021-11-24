@@ -1,33 +1,10 @@
 {
     "name": "Main",
-    "categories": [
-        {
-            "name": "test",
-            "products": [
-                {
-                    "product accounts": [
-                        {
-                            "date": "2002-12-12",
-                            "amount": 13,
-                            "cost": 57.8
-                        },
-                        {
-                            "date": "2002-12-13",
-                            "amount": 10,
-                            "cost": 2.2
-                        }
-                    ],
-                    "name": "apple"
-                },
-                {
-                    "product accounts": [],
-                    "name": "apple2"
-                }
-            ]
-        },
-        {
-            "name": "test2",
-            "products": []
-        }
-    ]
+    "categories": [{
+        "name": "food",
+        "products": [{
+            "product accounts": [],
+            "name": "apple"
+        }]
+    }]
 }

@@ -79,6 +79,7 @@ public class Category implements Writable {
             }
         }
         productList.add(product);
+        EventLog.getInstance().logEvent(new Event(product.getName() + "Product added"));
         return productList;
     }
 
@@ -89,6 +90,7 @@ public class Category implements Writable {
      */
     public ArrayList<Product> removeProduct(Product product) {
         productList.remove(product);
+        EventLog.getInstance().logEvent(new Event(product.getName() + "Product removed"));
         return productList;
     }
 
@@ -155,5 +157,9 @@ public class Category implements Writable {
         }
 
         return jsonArray;
+    }
+
+    public String toString() {
+        return this.name;
     }
 }

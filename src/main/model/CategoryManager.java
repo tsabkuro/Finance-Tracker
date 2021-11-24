@@ -51,6 +51,7 @@ public class CategoryManager implements Writable {
             }
         }
         categories.add(category);
+        EventLog.getInstance().logEvent(new Event(category.getName() + "Added category"));
         return categories;
     }
 
@@ -61,6 +62,7 @@ public class CategoryManager implements Writable {
      */
     public ArrayList<Category> removeCategory(Category category) {
         categories.remove(category);
+        EventLog.getInstance().logEvent(new Event(category.getName() + "Removed category"));
         return categories;
     }
 
