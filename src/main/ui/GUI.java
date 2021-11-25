@@ -1,6 +1,7 @@
 package ui;
 
 import model.*;
+import model.Event;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -656,7 +657,7 @@ public class GUI implements ActionListener {
             jsonWriter.open();
             jsonWriter.write(categoryManager);
             jsonWriter.close();
-            System.out.println("Saved " + categoryManager.getName() + " to " + JSON_STORE);
+            EventLog.getInstance().logEvent(new Event("Saved " + categoryManager.getName() + " to " + JSON_STORE));
         } catch (FileNotFoundException e) {
             System.out.println("Unable to write to file: " + JSON_STORE);
         }
@@ -667,7 +668,7 @@ public class GUI implements ActionListener {
     private void loadCategoryManager() {
         try {
             categoryManager = jsonReader.readCM();
-            System.out.println("Loaded " + categoryManager.getName() + " from " + JSON_STORE);
+            EventLog.getInstance().logEvent(new Event("Loaded " + categoryManager.getName() + " from " + JSON_STORE));
             this.frame.dispose();
             new GUI(categoryManager);
         } catch (IOException e) {
