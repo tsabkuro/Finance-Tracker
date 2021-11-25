@@ -22,6 +22,7 @@ important. Managing your money is a great way to know where to cut costs and ach
 - As a user, I want to be able to load my finance tracker from file
 
 ## Phase 4: Task 2
+Event Sample
 - Wed Nov 24 14:37:09 PST 2021
 - Food category added
 - Wed Nov 24 14:37:11 PST 2021
@@ -38,3 +39,6 @@ important. Managing your money is a great way to know where to cut costs and ach
 - Cost set to 90.22 of product account - Date: 2002-11-1 Amount: 1Cost: 90.22
 - Wed Nov 24 14:38:01 PST 2021
 - Removed product account - Date: 2002-11-1 Amount: 1 Cost: 90.22
+
+## Phase 4: Task 3
+My class diagram is very concise and clear, and thus I do not think any refactoring is necessary to improve the design

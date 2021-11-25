@@ -1,9 +1,5 @@
 package ui;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import model.Event;
 import model.EventLog;
 
