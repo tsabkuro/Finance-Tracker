@@ -93,6 +93,8 @@ public class GUI implements ActionListener {
         frame.setLayout(new FlowLayout());
         this.categoryManager = categoryManager;
 
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         initialise();
 
         lp = new LogPrinter();
@@ -109,9 +111,6 @@ public class GUI implements ActionListener {
     // MODIFIES: this
     // EFFECTS: creates frame and initial panels
     public void initialise() {
-        jsonWriter = new JsonWriter(JSON_STORE);
-        jsonReader = new JsonReader(JSON_STORE);
-
         mainPanel = new JPanel(new CardLayout());
 
         cl = (CardLayout)(mainPanel.getLayout());
@@ -126,6 +125,18 @@ public class GUI implements ActionListener {
         cl.show(mainPanel, "menu");
 
         frame.add(mainPanel, BorderLayout.CENTER);
+
+        for (Category category: categoryManager.getCategories()) {
+            mainPanel.add(productPanelCreator(category), category.getName());
+            for (Product product: category.getProductList()) {
+                mainPanel.add(productAccountPanelCreator(product),
+                        category.getCreateProductJTextField().getText());
+                for (ProductAccount productAccount: product.getProductAccounts()) {
+                    productAccountToBeAddedPanel = productAccountUpdatePanelCreator(productAccount);
+                    mainPanel.add(productAccountToBeAddedPanel, product.getProductAccountDateField().getText());
+                }
+            }
+        }
 
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -413,29 +424,40 @@ public class GUI implements ActionListener {
     }
 
     // MODIFIES: this
+    // EFFECTS: makes label background black and foreground white
+    public void labelChanger(JLabel jlabel) {
+        jlabel.setFont(new Font("Serif", Font.PLAIN, 20));
+        jlabel.setForeground(Color.WHITE);
+        jlabel.setBackground(Color.BLACK);
+        jlabel.setOpaque(true);
+    }
+
+    // MODIFIES: this
     // EFFECTS: actions for inside category stats
     public void actionPerformedCategoryStats(ActionEvent e) {
         if (e.getActionCommand().equals("getDayCostCategory")) {
             dayCostLabel.setText(Double.toString(round(chosenCategory.getDayCost(dayCostInput.getText()), 2)));
-            dayCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(dayCostLabel);
             categoryStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getMonthCostCategory")) {
             monthCostLabel.setText(Double.toString(round(chosenCategory.getMonthCost(monthCostInput.getText()), 2)));
-            monthCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(monthCostLabel);
             categoryStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getYearCostCategory")) {
             yearCostLabel.setText(Double.toString(round(chosenCategory.getYearCost(yearCostInput.getText()), 2)));
-            yearCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(yearCostLabel);
             categoryStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getTotalCostCategory")) {
             totalCostLabel.setText(Double.toString(round(chosenCategory.getTotalCost(), 2)));
-            totalCostLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            totalCostLabel.setForeground(Color.WHITE);
+            totalCostLabel.setBackground(Color.BLACK);
+            totalCostLabel.setOpaque(true);
             categoryStats.updateUI();
         }
     }
@@ -555,27 +577,27 @@ public class GUI implements ActionListener {
         if (e.getActionCommand().equals("getDayCostProduct")) {
             dayCostLabelProduct.setText(Double.toString(
                     round(chosenProduct.getDayCost(dayCostInputProduct.getText()), 2)));
-            dayCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(dayCostLabelProduct);
             productStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getMonthCostProduct")) {
             monthCostLabelProduct.setText(Double.toString(
                     round(chosenProduct.getMonthCost(monthCostInputProduct.getText()), 2)));
-            monthCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(monthCostLabelProduct);
             productStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getYearCostProduct")) {
             yearCostLabelProduct.setText(Double.toString(
                     round(chosenProduct.getYearCost(yearCostInputProduct.getText()), 2)));
-            yearCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(yearCostLabelProduct);
             productStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getTotalCostProduct")) {
             totalCostLabelProduct.setText(Double.toString(round(chosenProduct.getTotalCost(), 2)));
-            totalCostLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(totalCostLabelProduct);
             productStats.updateUI();
         }
     }
@@ -586,27 +608,27 @@ public class GUI implements ActionListener {
         if (e.getActionCommand().equals("getDayAmountProduct")) {
             dayAmountLabelProduct.setText(
                     Integer.toString(chosenProduct.getDayAmount(dayAmountInputProduct.getText())));
-            dayAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(dayAmountLabelProduct);
             productStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getMonthAmountProduct")) {
             monthAmountLabelProduct.setText(
                     Integer.toString(chosenProduct.getMonthAmount(monthAmountInputProduct.getText())));
-            monthAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(monthAmountLabelProduct);
             productStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getYearAmountProduct")) {
             yearAmountLabelProduct.setText(
                     Integer.toString(chosenProduct.getYearAmount(yearAmountInputProduct.getText())));
-            yearAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(yearAmountLabelProduct);
             productStats.updateUI();
         }
 
         if (e.getActionCommand().equals("getTotalAmountProduct")) {
             totalAmountLabelProduct.setText(Integer.toString(chosenProduct.getTotalAmount()));
-            totalAmountLabelProduct.setFont(new Font("Serif", Font.PLAIN, 20));
+            labelChanger(totalAmountLabelProduct);
             productStats.updateUI();
         }
     }
