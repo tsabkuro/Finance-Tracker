@@ -129,11 +129,9 @@ public class GUI implements ActionListener {
         for (Category category: categoryManager.getCategories()) {
             mainPanel.add(productPanelCreator(category), category.getName());
             for (Product product: category.getProductList()) {
-                mainPanel.add(productAccountPanelCreator(product),
-                        category.getCreateProductJTextField().getText());
+                mainPanel.add(productAccountPanelCreator(product), product.getName());
                 for (ProductAccount productAccount: product.getProductAccounts()) {
-                    productAccountToBeAddedPanel = productAccountUpdatePanelCreator(productAccount);
-                    mainPanel.add(productAccountToBeAddedPanel, product.getProductAccountDateField().getText());
+                    mainPanel.add(productAccountUpdatePanelCreator(productAccount), productAccount.getDate());
                 }
             }
         }

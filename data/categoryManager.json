@@ -2,12 +2,32 @@
     "name": "Main",
     "categories": [
         {
-            "name": "Whack",
+            "name": "Appliances",
             "products": []
         },
         {
-            "name": "Relly",
-            "products": []
+            "name": "Food",
+            "products": [
+                {
+                    "product accounts": [
+                        {
+                            "date": "2002-12-12",
+                            "amount": 13,
+                            "cost": 289.12
+                        },
+                        {
+                            "date": "2002-12-14",
+                            "amount": 13,
+                            "cost": 289.12
+                        }
+                    ],
+                    "name": "apples"
+                },
+                {
+                    "product accounts": [],
+                    "name": "oranges"
+                }
+            ]
         }
     ]
 }
